@@ -8,5 +8,9 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.api.nvim_buf_create_user_command(0, "JumpPrevHole", function()
       require("ocaml").jump_to_hole("prev")
     end, {})
+
+    vim.api.nvim_create_user_command("Construct", function()
+      require("ocaml").construct()
+    end, {})
   end,
 })

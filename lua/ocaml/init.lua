@@ -36,4 +36,45 @@ function ocaml.jump_to_hole(dir, range)
   end)
 end
 
+function ocaml.construct(input)
+  with_server(function(client)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local params = {
+      uri = vim.uri_from_bufnr(0),
+      position = {line = row - 1, character = col},
+      withValues = "local"
+    }
+    local result = client.request_sync("ocamllsp/construct", params, 1000)
+    if not (result and result.result) then
+      vim.notify("Unable to construct.", vim.log.levels.WARN)
+      return
+    end
+
+    local choices = result.result.result
+
+    local function apply_choice(choice)
+      vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col + 1, {choice})
+      local range = {
+        start = { line = row - 1, character = col },
+        ["end"] = { line = row - 1, character = col + #choice }
+      }
+      require("ocaml").jump_to_hole("next", range)
+      vim.cmd.redraw()
+    end
+
+    if input then
+      local choice = choices[input]
+      if choice then
+        apply_choice(choice)
+      end
+    else
+      vim.ui.select(choices, {prompt = "Choose a construct:"}, function(choice)
+        if choice then
+          apply_choice(choice)
+        end
+      end)
+    end
+  end)
+end
+
 return ocaml
