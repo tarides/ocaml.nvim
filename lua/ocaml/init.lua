@@ -182,6 +182,22 @@ function ocaml.infer_intf()
   end)
 end
 
+function ocaml.switch_file()
+  with_server(function(client)
+    local result = client.request_sync("ocamllsp/switchImplIntf", { vim.uri_from_bufnr(0) }, 1000)
+    if not (result and result.result) then
+      vim.notify("No file to switch founded.", vim.log.levels.WARN)
+      return
+    end
+    local target = vim.uri_to_fname(result.result[1])
+    if vim.fn.filereadable(target) == 1 then
+      vim.cmd.edit(target)
+      return
+    end
+    vim.cmd.edit(target)
+  end)
+end
+
 --- Initialize the OCaml plugin
 ---@param config any
 function ocaml.setup(config)
@@ -217,6 +233,10 @@ function ocaml.setup(config)
 
       vim.api.nvim_create_user_command("InferIntf", function()
         require("ocaml").infer_intf()
+      end, {})
+
+      vim.api.nvim_create_user_command("AlternateFile", function()
+        require("ocaml").switch_file()
       end, {})
     end,
   })
