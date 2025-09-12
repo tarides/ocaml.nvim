@@ -138,6 +138,50 @@ function ocaml.phrase(dir)
   end)
 end
 
+local function is_buf_empty(buf)
+  local line_count = vim.api.nvim_buf_line_count(buf)
+  local first_line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1]
+  return first_line == "" and line_count == 1
+end
+
+local function unsafe_toggle_ml_mli(buf)
+  local fname = vim.api.nvim_buf_get_name(buf)
+  local target = fname:match("%.mli$") and fname:gsub("%.mli$", ".ml") or fname:gsub("%.ml$", ".mli")
+  vim.cmd.edit(target)
+end
+
+local function load_pair(buf)
+  unsafe_toggle_ml_mli(buf)
+  unsafe_toggle_ml_mli(buf)
+end
+
+function ocaml.infer_intf()
+  local fname = vim.api.nvim_buf_get_name(0)
+  if not (fname:match("%.mli$")) then
+    vim.notify("Not an interface file.", vim.log.levels.WARN)
+    return
+  end
+  with_server(function(client)
+    local mlfile = fname:gsub("%.mli", ".ml")
+    if vim.fn.filereadable(mlfile) == 0 then
+      vim.notify("Source file not found: " .. mlfile, vim.log.levels.WARN)
+      return
+    end
+    load_pair(0)
+    local result = client.request_sync("ocamllsp/inferIntf", { vim.uri_from_fname(mlfile) }, 1000)
+    if not (result and result.result) then
+      vim.notify("Unable to infer the interface.", vim.log.levels.WARN)
+      return
+    end
+    local intf_lines = vim.split(result.result, "\n", { plain = true })
+    if is_buf_empty(0) then
+      vim.api.nvim_buf_set_lines(0, 0, -1, false, intf_lines)
+      return
+    end
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, intf_lines)
+  end)
+end
+
 --- Initialize the OCaml plugin
 ---@param config any
 function ocaml.setup(config)
@@ -169,6 +213,10 @@ function ocaml.setup(config)
 
       vim.api.nvim_create_user_command("PhraseNext", function()
         ocaml.phrase("next")
+      end, {})
+
+      vim.api.nvim_create_user_command("InferIntf", function()
+        require("ocaml").infer_intf()
       end, {})
     end,
   })
