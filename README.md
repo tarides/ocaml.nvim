@@ -38,6 +38,8 @@ All of the commands are detailed and illustrated in the following sections.
 | `Jump` | -- | :white_check_mark: | :x: | Jumps to the referenced expression. |
 | `PhraseNext` | -- | :white_check_mark: | :x: | Jump to the beginnning of the previous phrase. |
 | `PhrasePrev` | -- | :white_check_mark: | :x: | Jump to the beginning of the next phrase. |
+| `InferIntf` | -- | :white_check_mark: | :x: | Infer the interface for the current implementation file. |
+| `AlternateFile` | -- | :white_check_mark: | :x: | Switch from the implementation file to the interface file and vice versa. |
 | `ErrorNext` | -- | :x: | :x: | Jump to the next error. |
 | `ErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
 | `FindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
@@ -55,8 +57,6 @@ All of the commands are detailed and illustrated in the following sections.
 | `FindTypeDefinition` | -- | :x: | :x: | Jump to the type definition of the expression. |
 | `FindTypeDefinitionInNewWindow` | -- | :x: | :x: | -- |
 | `FindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `InferInterface` | -- | :x: | :x: | Infer the interface for the current implementation file. |
-| `AlternateFile` | -- | :x: | :x: | Switch from the implementation file to the interface file and vice versa. |
 | `Search` | -- | :x: | :x: | Searches for a value by its type or polarity to included in the current buffer. |
 | `SearchDefinition` | -- | :x: | :x: | Searches for a value definition by its type or polarity. |
 | `SearchDefinitionInNewWindow` | -- | :x: | :x: | -- |
@@ -97,3 +97,16 @@ It is also possible to navigate between pattern matching cases:
 - `PhraseNext`: jump to the beginning of the next phrase
 
 ![Phrase example](media/phrase.gif)
+
+### Infer interface
+Used to infer the type of an interface file. If the buffer is not empty,
+a prompt will ask for confirmation to overwrite the buffer contents.
+
+![Infer example](media/infer.gif)
+
+### Find alternate file
+Quickly switch from the implementation file to the interface file and
+vice versa. If the interface file does not exist, a prompt can be used to
+generate it.
+
+![Alternate file example](media/switch.gif)
