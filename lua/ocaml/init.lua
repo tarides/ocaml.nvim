@@ -77,4 +77,29 @@ function ocaml.construct(input)
   end)
 end
 
+function ocaml.construct_for_test(input)
+  with_server(function(client)
+    local row = vim.api.nvim_win_get_cursor(0)[1]
+    local col = vim.api.nvim_win_get_cursor(0)[2]
+    local params = {
+      uri = vim.uri_from_bufnr(0),
+      position = {line = row - 1, character = col},
+      withValues = "local"
+    }
+    local result = client.request_sync("ocamllsp/construct", params, 1000)
+    if not (result and result.result) then
+      vim.notify("Unable to construct.", vim.log.levels.WARN)
+      return
+    end
+
+    local choices = result.result.result
+    local choice = choices[input]
+    if not choice then return end
+    vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col + 1, {choice})
+    if choice:find("_") then
+      require("ocaml").jump_to_hole("next")
+    end
+  end)
+end
+
 return ocaml
