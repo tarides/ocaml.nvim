@@ -16,5 +16,13 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.api.nvim_create_user_command("Jump", function(opts)
       require("ocaml").jump(opts.args)
     end, { nargs = 1 })
+
+    vim.api.nvim_create_user_command("PhrasePrev", function()
+      require("ocaml").phrase("prev")
+    end, {})
+
+    vim.api.nvim_create_user_command("PhraseNext", function()
+      require("ocaml").phrase("next")
+    end, {})
   end,
 })

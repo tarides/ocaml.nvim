@@ -101,4 +101,39 @@ function ocaml.jump(target)
   end)
 end
 
+function ocaml.phrase(dir)
+  with_server(function(client)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local params = {
+      uri = vim.uri_from_bufnr(0),
+      command = "phrase",
+      args = {
+        "-position", row .. ":" .. col,
+        "-target", dir
+      },
+      resultAsSexp = false
+    }
+    local result = client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
+    if not (result and result.result) then
+      vim.notify("No OCaml phrase found at cursor.", vim.log.levels.WARN)
+      return
+    end
+    local data = result.result.result
+
+    local ok, parsed = pcall(vim.fn.json_decode, data)
+    if not ok or not parsed.value or not parsed.value.pos then
+      vim.notify("Invalid response from server.", vim.log.levels.ERROR)
+      return
+    end
+    local line = parsed.value.pos.line
+    local col = parsed.value.pos.col
+
+    if line > vim.api.nvim_buf_line_count(0) then
+      vim.notify("No further phrases found.", vim.log.levels.INFO)
+      return
+    end
+    vim.api.nvim_win_set_cursor(0, {line, col})
+  end)
+end
+
 return ocaml
