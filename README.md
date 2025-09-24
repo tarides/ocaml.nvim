@@ -31,7 +31,7 @@ All of the commands are detailed and illustrated in the following sections.
 > go-to-definition and hover documentation.
 
 | Command | Default Binding | Available | Tests | Description |
-| -- | -- | -- |
+| -- | -- | -- | -- | -- |
 | `JumpPrevHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the previous hole. |
 | `JumpNextHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the next hole. |
 | `Construct` | -- | :white_check_mark: | :white_check_mark: | Open up a list of valid substitutions to fill the hole. |
