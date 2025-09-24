@@ -30,11 +30,47 @@ All of the commands are detailed and illustrated in the following sections.
 > However, the builtin LSP of Neovim already provides standards commands such as
 > go-to-definition and hover documentation.
 
-| Command | Default Binding | Description |
+| Command | Default Binding | Available | Tests | Description |
 | -- | -- | -- |
-| `JumpPrevHole` | -- | Jump to the previous hole. |
-| `JumpNextHole` | -- | Jump to the next hole. |
-| `Construct` | -- | Open up a list of valid substitutions to fill the hole. |
+| `JumpPrevHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the previous hole. |
+| `JumpNextHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the next hole. |
+| `Construct` | -- | :white_check_mark: | :white_check_mark: | Open up a list of valid substitutions to fill the hole. |
+| `ErrorNext` | -- | :x: | :x: | Jump to the next error. |
+| `ErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
+| `FindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
+| `FindDefinitionInNewWindow` | -- | :x: | :x: | -- |
+| `FindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `FindIdentifierDefinition` | -- | :x: | :x: | -- |
+| `FindIdentifierDefinitionInNewWindow` | -- | :x: | :x: | -- |
+| `FindIdentifierDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `FindDeclaration` | -- | :x: | :x: | Jump to declaration (the signature). |
+| `FindDeclarationInNewWindow` | -- | :x: | :x: | -- |
+| `FindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `FindIdentifierDeclaration` | -- | :x: | :x: | -- |
+| `FindIdentifierDeclarationInNewWindow` | -- | :x: | :x: | -- |
+| `FindIdentifierDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
+| `FindTypeDefinition` | -- | :x: | :x: | Jump to the type definition of the expression. |
+| `FindTypeDefinitionInNewWindow` | -- | :x: | :x: | -- |
+| `FindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `InferInterface` | -- | :x: | :x: | Infer the interface for the current implementation file. |
+| `AlternateFile` | -- | :x: | :x: | Switch from the implementation file to the interface file and vice versa. |
+| `Jump` | -- | :x: | :x: | Jumps to the referenced expression. |
+| `PhraseNext` | -- | :x: | :x: | Jump to the beginnning of the previous phrase. |
+| `PhrasePrev` | -- | :x: | :x: | Jump to the beginning of the next phrase. |
+| `Search` | -- | :x: | :x: | Searches for a value by its type or polarity to included in the current buffer. |
+| `SearchDefinition` | -- | :x: | :x: | Searches for a value definition by its type or polarity. |
+| `SearchDefinitionInNewWindow` | -- | :x: | :x: | -- |
+| `SearchDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `SearchDeclaration` | -- | :x: | :x: | Searches for a value declaration by its type or polarity. |
+| `SearchDeclarationInNewWindow` | -- | :x: | :x: | -- |
+| `SearchDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
+| `Document` | -- | :x: | :x: | Documents the expression below the cursor. |
+| `DocumentIdentifier` | -- | :x: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
+| `Destruct` | -- | :x: | :x: | Allows you to generate and manipulate pattern matching expressions. |
+| `TypeExpression` | -- | :x: | :x: | -- |
+| `TypeEnclosing` | -- | :x: | :x: | Display the type of the selection and start a "type enclosing" session. |
+| `Occurences` | -- | :x: | :x: | Returns all occurrences of the identifier under the cursor. |
+| `Rename` | -- | :x: | :x: | Rename the symbol under the cursor. |
 
 ### Construct expression
 
