@@ -12,5 +12,9 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.api.nvim_create_user_command("Construct", function()
       require("ocaml").construct()
     end, {})
+
+    vim.api.nvim_create_user_command("Jump", function(opts)
+      require("ocaml").jump(opts.args)
+    end, { nargs = 1 })
   end,
 })

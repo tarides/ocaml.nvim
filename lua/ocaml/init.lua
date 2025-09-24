@@ -77,4 +77,28 @@ function ocaml.construct(input)
   end)
 end
 
+function ocaml.jump(target)
+  with_server(function(client)
+    local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
+    local result = client.request_sync("ocamllsp/jump", params, 1000)
+    if not (result and result.result) then
+      vim.notify("Unable to jump.", vim.log.levels.WARN)
+      return
+    end
+    local jumps = result.result.jumps
+    if #jumps == 0 then
+      vim.notify("Nothing to jump to.", vim.log.levels.INFO)
+      return
+    end
+    for _, j in ipairs(jumps) do
+      if j.target == target then
+        vim.api.nvim_win_set_cursor(0, {j.position.line+1, j.position.character})
+        return
+      end
+    end
+      vim.cmd.redraw()
+      vim.notify("Unable to jump to " .. target, vim.log.levels.INFO)
+  end)
+end
+
 return ocaml
