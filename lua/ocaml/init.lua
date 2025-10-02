@@ -198,20 +198,20 @@ function ocaml.switch_file()
 end
 
 local function find_identifier(client, identifier, method)
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-    local params = {
-      uri = vim.uri_from_bufnr(0),
-      command = "locate",
-      args = {
-        "-position",
-        row + 1 .. ":" .. col,
-        "-prefix",
-        identifier,
-        "-look-for",
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local params = {
+    uri = vim.uri_from_bufnr(0),
+    command = "locate",
+    args = {
+      "-position",
+      row + 1 .. ":" .. col,
+      "-prefix",
+      identifier,
+      "-look-for",
       method,
-      },
-      resultAsSexp = false,
-    }
+    },
+    resultAsSexp = false,
+  }
   return client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
 end
 
@@ -229,6 +229,20 @@ function ocaml.find_identifier_def(identifier)
     local result = find_identifier(client, identifier, "implementation")
     if not (result and result.result) then
       vim.notify("No definition for identifier " .. identifier .. ".", vim.log.levels.WARN)
+      return
+    end
+    local data = result.result.result
+    local parsed = parse(data)
+    vim.cmd.split(parsed.value.file)
+    vim.api.nvim_win_set_cursor(0, { parsed.value.pos.line, parsed.value.pos.col })
+  end)
+end
+
+function ocaml.find_identifier_decl(identifier)
+  with_server(function(client)
+    local result = find_identifier(client, identifier, "interface")
+    if not (result and result.result) then
+      vim.notify("No declaration for identifier " .. identifier .. ".", vim.log.levels.WARN)
       return
     end
     local data = result.result.result
@@ -282,8 +296,11 @@ function ocaml.setup(config)
       vim.api.nvim_create_user_command("FindIdentifierDefinition", function(opts)
         require("ocaml").find_identifier_def(opts.args)
       end, { nargs = 1 })
+
+      vim.api.nvim_create_user_command("FindIdentifierDeclaration", function(opts)
+        require("ocaml").find_identifier_decl(opts.args)
+      end, { nargs = 1 })
     end,
   })
 end
-
 return ocaml
