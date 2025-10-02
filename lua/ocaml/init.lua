@@ -92,12 +92,12 @@ function ocaml.jump(target)
     end
     for _, j in ipairs(jumps) do
       if j.target == target then
-        vim.api.nvim_win_set_cursor(0, {j.position.line+1, j.position.character})
+        vim.api.nvim_win_set_cursor(0, { j.position.line + 1, j.position.character })
         return
       end
     end
-      vim.cmd.redraw()
-      vim.notify("Unable to jump to " .. target, vim.log.levels.INFO)
+    vim.cmd.redraw()
+    vim.notify("Unable to jump to " .. target, vim.log.levels.INFO)
   end)
 end
 
@@ -108,10 +108,12 @@ function ocaml.phrase(dir)
       uri = vim.uri_from_bufnr(0),
       command = "phrase",
       args = {
-        "-position", row .. ":" .. col,
-        "-target", dir
+        "-position",
+        row .. ":" .. col,
+        "-target",
+        dir,
       },
-      resultAsSexp = false
+      resultAsSexp = false,
     }
     local result = client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
     if not (result and result.result) then
@@ -132,8 +134,44 @@ function ocaml.phrase(dir)
       vim.notify("No further phrases found.", vim.log.levels.INFO)
       return
     end
-    vim.api.nvim_win_set_cursor(0, {line, col})
+    vim.api.nvim_win_set_cursor(0, { line, col })
   end)
+end
+
+--- Initialize the OCaml plugin
+---@param config any
+function ocaml.setup(config)
+  -- No config yet, itt can be ignored.
+  local _ = config
+
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "ocaml", "ocaml.interface" },
+    callback = function()
+      vim.api.nvim_buf_create_user_command(0, "JumpNextHole", function()
+        ocaml.jump_to_hole("next")
+      end, {})
+
+      vim.api.nvim_buf_create_user_command(0, "JumpPrevHole", function()
+        ocaml.jump_to_hole("prev")
+      end, {})
+
+      vim.api.nvim_create_user_command("Construct", function()
+        ocaml.construct()
+      end, {})
+
+      vim.api.nvim_create_user_command("Jump", function(opts)
+        ocaml.jump(opts.args)
+      end, { nargs = 1 })
+
+      vim.api.nvim_create_user_command("PhrasePrev", function()
+        ocaml.phrase("prev")
+      end, {})
+
+      vim.api.nvim_create_user_command("PhraseNext", function()
+        ocaml.phrase("next")
+      end, {})
+    end,
+  })
 end
 
 return ocaml
