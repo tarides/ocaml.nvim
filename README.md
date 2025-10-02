@@ -38,20 +38,17 @@ All of the commands are detailed and illustrated in the following sections.
 | `Jump` | -- | :white_check_mark: | :x: | Jumps to the referenced expression. |
 | `PhraseNext` | -- | :white_check_mark: | :x: | Jump to the beginnning of the previous phrase. |
 | `PhrasePrev` | -- | :white_check_mark: | :x: | Jump to the beginning of the next phrase. |
+| `FindIdentifierDefinition` | -- | :white_check_mark: | :x: | -- |
+| `FindIdentifierDeclaration` | -- | :white_check_mark: | :x: | -- |
+| `DocumentIdentifier` | -- | :white_check_mark: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
 | `ErrorNext` | -- | :x: | :x: | Jump to the next error. |
 | `ErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
 | `FindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
 | `FindDefinitionInNewWindow` | -- | :x: | :x: | -- |
 | `FindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `FindIdentifierDefinition` | -- | :x: | :x: | -- |
-| `FindIdentifierDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `FindIdentifierDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
 | `FindDeclaration` | -- | :x: | :x: | Jump to declaration (the signature). |
 | `FindDeclarationInNewWindow` | -- | :x: | :x: | -- |
 | `FindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `FindIdentifierDeclaration` | -- | :x: | :x: | -- |
-| `FindIdentifierDeclarationInNewWindow` | -- | :x: | :x: | -- |
-| `FindIdentifierDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
 | `FindTypeDefinition` | -- | :x: | :x: | Jump to the type definition of the expression. |
 | `FindTypeDefinitionInNewWindow` | -- | :x: | :x: | -- |
 | `FindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
@@ -65,7 +62,6 @@ All of the commands are detailed and illustrated in the following sections.
 | `SearchDeclarationInNewWindow` | -- | :x: | :x: | -- |
 | `SearchDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
 | `Document` | -- | :x: | :x: | Documents the expression below the cursor. |
-| `DocumentIdentifier` | -- | :x: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
 | `Destruct` | -- | :x: | :x: | Allows you to generate and manipulate pattern matching expressions. |
 | `TypeExpression` | -- | :x: | :x: | -- |
 | `TypeEnclosing` | -- | :x: | :x: | Display the type of the selection and start a "type enclosing" session. |
@@ -97,3 +93,20 @@ It is also possible to navigate between pattern matching cases:
 - `PhraseNext`: jump to the beginning of the next phrase
 
 ![Phrase example](media/phrase.gif)
+
+### Find identifiers definition/declaration
+
+It is possible to directly enter the name of an identifier (definition or declaration) using the following commands.
+
+- `FindIdentifierDefinition`
+- `FindIdentifierDeclaration`
+
+![Finds example](media/find.gif)
+
+### Get documentation
+
+It is possible to get the document of the identifier given in the argument.
+
+- `DocumentIdentifier`
+
+![Documentation example](media/doc.gif)
