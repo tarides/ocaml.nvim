@@ -121,7 +121,6 @@ function ocaml.phrase(dir)
       return
     end
     local data = result.result.result
-
     local ok, parsed = pcall(vim.fn.json_decode, data)
     if not ok or not parsed.value or not parsed.value.pos then
       vim.notify("Invalid response from server.", vim.log.levels.ERROR)
@@ -134,6 +133,41 @@ function ocaml.phrase(dir)
       vim.notify("No further phrases found.", vim.log.levels.INFO)
       return
     end
+    vim.api.nvim_win_set_cursor(0, { line, col })
+  end)
+end
+
+function ocaml.find_identifier_def(identifier)
+  with_server(function(client)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local params = {
+      uri = vim.uri_from_bufnr(0),
+      command = "locate",
+      args = {
+        "-position",
+        row + 1 .. ":" .. col,
+        "-prefix",
+        identifier,
+        "-look-for",
+        "implementation",
+      },
+      resultAsSexp = false,
+    }
+    local result = client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
+    if not (result and result.result) then
+      vim.notify("No definition for identifier " .. identifier .. ".", vim.log.levels.WARN)
+      return
+    end
+    local data = result.result.result
+    local ok, parsed = pcall(vim.fn.json_decode, data)
+    if not ok or not parsed.value or not parsed.value.pos then
+      vim.notify("Invalid response from server.", vim.log.levels.ERROR)
+      return
+    end
+    local file = parsed.value.file
+    local line = parsed.value.pos.line
+    local col = parsed.value.pos.col
+    vim.cmd.split(file)
     vim.api.nvim_win_set_cursor(0, { line, col })
   end)
 end
@@ -170,6 +204,10 @@ function ocaml.setup(config)
       vim.api.nvim_create_user_command("PhraseNext", function()
         ocaml.phrase("next")
       end, {})
+
+      vim.api.nvim_create_user_command("FindIdentifierDefinition", function(opts)
+        require("ocaml").find_identifier_def(opts.args)
+      end, { nargs = 1 })
     end,
   })
 end
