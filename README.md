@@ -8,14 +8,14 @@ generic LSP clients, such as Construct, alternate between `.mli` and `.ml`
 files, etc.
 
 ## Installation using `lazy.nvim`
+
 Add the plugin to your `lazy.nvim` setup:
 
 ```lua
 require("lazy").setup({
   { "tarides/ocaml.nvim",
-    lazy = false,
     config = function()
-      require("ocaml")
+      require("ocaml").setup()
     end
   }
 })
