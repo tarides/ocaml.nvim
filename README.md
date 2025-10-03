@@ -35,6 +35,9 @@ All of the commands are detailed and illustrated in the following sections.
 | `JumpPrevHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the previous hole. |
 | `JumpNextHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the next hole. |
 | `Construct` | -- | :white_check_mark: | :white_check_mark: | Open up a list of valid substitutions to fill the hole. |
+| `Jump` | -- | :white_check_mark: | :x: | Jumps to the referenced expression. |
+| `PhraseNext` | -- | :white_check_mark: | :x: | Jump to the beginnning of the previous phrase. |
+| `PhrasePrev` | -- | :white_check_mark: | :x: | Jump to the beginning of the next phrase. |
 | `ErrorNext` | -- | :x: | :x: | Jump to the next error. |
 | `ErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
 | `FindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
@@ -54,9 +57,6 @@ All of the commands are detailed and illustrated in the following sections.
 | `FindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
 | `InferInterface` | -- | :x: | :x: | Infer the interface for the current implementation file. |
 | `AlternateFile` | -- | :x: | :x: | Switch from the implementation file to the interface file and vice versa. |
-| `Jump` | -- | :x: | :x: | Jumps to the referenced expression. |
-| `PhraseNext` | -- | :x: | :x: | Jump to the beginnning of the previous phrase. |
-| `PhrasePrev` | -- | :x: | :x: | Jump to the beginning of the next phrase. |
 | `Search` | -- | :x: | :x: | Searches for a value by its type or polarity to included in the current buffer. |
 | `SearchDefinition` | -- | :x: | :x: | Searches for a value definition by its type or polarity. |
 | `SearchDefinitionInNewWindow` | -- | :x: | :x: | -- |
@@ -82,3 +82,18 @@ interactively substitute them:
 - `Construct`: open up a list of valid substitutions to fill the hole
 
 ![Construct example](media/construct.gif)
+
+### Source browsing
+
+Allows you to navigate semantically in a buffer, passing from an expression to
+the parent `let`, the parent `module`, the parent `fun` and the parent `match` expression.
+It is also possible to navigate between pattern matching cases:
+
+- `Jump`: jumps to the referenced expression
+
+![Jump example](media/jump.gif)
+
+- `PhrasePrev`: jump to the beginning of the previous phrase
+- `PhraseNext`: jump to the beginning of the next phrase
+
+![Phrase example](media/phrase.gif)
