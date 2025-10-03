@@ -252,6 +252,24 @@ function ocaml.find_identifier_decl(identifier)
   end)
 end
 
+function ocaml.document_identifier(identifier)
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  with_server(function(client)
+    local params = {
+      textDocument = { uri = vim.uri_from_bufnr(0) },
+      position = { line = row, character = col },
+      identifier = identifier,
+    }
+    local result = client.request_sync("ocamllsp/getDocumentation", params, 1000)
+    if not (result and result.result) then
+      vim.notify("No documentation found for " .. identifier, vim.log.levels.WARN)
+      return
+    end
+    local doc = result.result.doc.value
+    print(doc)
+  end)
+end
+
 --- Initialize the OCaml plugin
 ---@param config any
 function ocaml.setup(config)
@@ -299,6 +317,10 @@ function ocaml.setup(config)
 
       vim.api.nvim_create_user_command("FindIdentifierDeclaration", function(opts)
         require("ocaml").find_identifier_decl(opts.args)
+      end, { nargs = 1 })
+
+      vim.api.nvim_create_user_command("DocumentIdentifier", function(opts)
+        require("ocaml").document_identifier(opts.args)
       end, { nargs = 1 })
     end,
   })
