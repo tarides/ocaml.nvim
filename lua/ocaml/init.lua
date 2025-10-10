@@ -1,24 +1,8 @@
+local helper = require("helpers")
 local ocaml = {}
 
-local function get_server()
-  local clients = vim.lsp.get_clients({ name = "ocamllsp" })
-  for _, client in ipairs(clients) do
-    if client.name == "ocamllsp" then
-      return client
-    end
-  end
-end
-
-local function with_server(callback)
-  local server = get_server()
-  if server then
-    return callback(server)
-  end
-  vim.notify("No OCaml LSP server available", vim.log.levels.ERROR)
-end
-
 function ocaml.jump_to_hole(dir, range)
-  with_server(function(client)
+  helper.with_server(function(client)
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
@@ -26,7 +10,7 @@ function ocaml.jump_to_hole(dir, range)
       direction = dir,
       range = range,
     }
-    local result = client.request_sync("ocamllsp/jumpToTypedHole", params, 1000)
+    local result = helper.request(client, "ocamllsp/jumpToTypedHole", params)
     if not (result and result.result) then
       vim.notify("No typed holes found.", vim.log.levels.WARN)
       return
@@ -37,14 +21,14 @@ function ocaml.jump_to_hole(dir, range)
 end
 
 function ocaml.construct(input)
-  with_server(function(client)
+  helper.with_server(function(client)
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
       position = { line = row - 1, character = col },
       withValues = "local",
     }
-    local result = client.request_sync("ocamllsp/construct", params, 1000)
+    local result = helper.request(client, "ocamllsp/construct", params)
     if not (result and result.result) then
       vim.notify("Unable to construct.", vim.log.levels.WARN)
       return
@@ -78,9 +62,9 @@ function ocaml.construct(input)
 end
 
 function ocaml.jump(target)
-  with_server(function(client)
+  helper.with_server(function(client)
     local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
-    local result = client.request_sync("ocamllsp/jump", params, 1000)
+    local result = helper.request(client, "ocamllsp/jump", params)
     if not (result and result.result) then
       vim.notify("Unable to jump.", vim.log.levels.WARN)
       return
@@ -102,7 +86,7 @@ function ocaml.jump(target)
 end
 
 function ocaml.phrase(dir)
-  with_server(function(client)
+  helper.with_server(function(client)
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
@@ -115,7 +99,7 @@ function ocaml.phrase(dir)
       },
       resultAsSexp = false,
     }
-    local result = client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
+    local result = helper.request(client, "ocamllsp/merlinCallCompatible", params)
     if not (result and result.result) then
       vim.notify("No OCaml phrase found at cursor.", vim.log.levels.WARN)
       return
@@ -147,11 +131,11 @@ function ocaml.setup(config)
   vim.api.nvim_create_autocmd("FileType", {
     pattern = { "ocaml", "ocaml.interface" },
     callback = function()
-      vim.api.nvim_buf_create_user_command(0, "JumpNextHole", function()
+      vim.api.nvim_create_user_command("JumpNextHole", function()
         ocaml.jump_to_hole("next")
       end, {})
 
-      vim.api.nvim_buf_create_user_command(0, "JumpPrevHole", function()
+      vim.api.nvim_create_user_command("JumpPrevHole", function()
         ocaml.jump_to_hole("prev")
       end, {})
 
