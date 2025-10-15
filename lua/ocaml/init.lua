@@ -279,47 +279,47 @@ function ocaml.setup(config)
   vim.api.nvim_create_autocmd("FileType", {
     pattern = { "ocaml", "ocaml.interface" },
     callback = function()
-      vim.api.nvim_buf_create_user_command(0, "JumpNextHole", function()
+      vim.api.nvim_buf_create_user_command(0, "OCamlJumpNextHole", function()
         ocaml.jump_to_hole("next")
       end, {})
 
-      vim.api.nvim_buf_create_user_command(0, "JumpPrevHole", function()
+      vim.api.nvim_buf_create_user_command(0, "OCamlJumpPrevHole", function()
         ocaml.jump_to_hole("prev")
       end, {})
 
-      vim.api.nvim_create_user_command("Construct", function()
+      vim.api.nvim_create_user_command("OCamlConstruct", function()
         ocaml.construct()
       end, {})
 
-      vim.api.nvim_create_user_command("Jump", function(opts)
+      vim.api.nvim_create_user_command("OCamlJump", function(opts)
         ocaml.jump(opts.args)
       end, { nargs = 1 })
 
-      vim.api.nvim_create_user_command("PhrasePrev", function()
+      vim.api.nvim_create_user_command("OCamlPhrasePrev", function()
         ocaml.phrase("prev")
       end, {})
 
-      vim.api.nvim_create_user_command("PhraseNext", function()
+      vim.api.nvim_create_user_command("OCamlPhraseNext", function()
         ocaml.phrase("next")
       end, {})
 
-      vim.api.nvim_create_user_command("InferIntf", function()
+      vim.api.nvim_create_user_command("OCamlInferIntf", function()
         require("ocaml").infer_intf()
       end, {})
 
-      vim.api.nvim_create_user_command("AlternateFile", function()
+      vim.api.nvim_create_user_command("OCamlAlternateFile", function()
         require("ocaml").switch_file()
       end, {})
 
-      vim.api.nvim_create_user_command("FindIdentifierDefinition", function(opts)
+      vim.api.nvim_create_user_command("OCamlFindIdentifierDefinition", function(opts)
         require("ocaml").find_identifier_def(opts.args)
       end, { nargs = 1 })
 
-      vim.api.nvim_create_user_command("FindIdentifierDeclaration", function(opts)
+      vim.api.nvim_create_user_command("OCamlFindIdentifierDeclaration", function(opts)
         require("ocaml").find_identifier_decl(opts.args)
       end, { nargs = 1 })
 
-      vim.api.nvim_create_user_command("DocumentIdentifier", function(opts)
+      vim.api.nvim_create_user_command("OCamlDocumentIdentifier", function(opts)
         require("ocaml").document_identifier(opts.args)
       end, { nargs = 1 })
     end,
