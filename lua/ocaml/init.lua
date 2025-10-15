@@ -315,6 +315,10 @@ function ocaml.search_declaration(query)
   search_definition_declaration(query, ocaml.find_identifier_decl)
 end
 
+function ocaml.search_definition(query)
+  search_definition_declaration(query, ocaml.find_identifier_def)
+end
+
 --- Initialize the OCaml plugin
 ---@param config any
 function M.setup(config)
@@ -372,6 +376,9 @@ function M.setup(config)
         ocaml.search_declaration(opts.args)
       end, { nargs = 1 })
 
+      vim.api.nvim_create_user_command("SearchDefinition", function(opts)
+        ocaml.search_definition(opts.args)
+      end, { nargs = 1 })
     end,
   })
 end
