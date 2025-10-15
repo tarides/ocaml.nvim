@@ -32,50 +32,50 @@ All of the commands are detailed and illustrated in the following sections.
 
 | Command | Default Binding | Available | Tests | Description |
 | -- | -- | -- | -- | -- |
-| `JumpPrevHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the previous hole. |
-| `JumpNextHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the next hole. |
-| `Construct` | -- | :white_check_mark: | :white_check_mark: | Open up a list of valid substitutions to fill the hole. |
-| `Jump` | -- | :white_check_mark: | :x: | Jumps to the referenced expression. |
-| `PhraseNext` | -- | :white_check_mark: | :x: | Jump to the beginnning of the previous phrase. |
-| `PhrasePrev` | -- | :white_check_mark: | :x: | Jump to the beginning of the next phrase. |
-| `InferIntf` | -- | :white_check_mark: | :x: | Infer the interface for the current implementation file. |
-| `AlternateFile` | -- | :white_check_mark: | :x: | Switch from the implementation file to the interface file and vice versa. |
-| `FindIdentifierDefinition` | -- | :white_check_mark: | :x: | -- |
-| `FindIdentifierDeclaration` | -- | :white_check_mark: | :x: | -- |
-| `DocumentIdentifier` | -- | :white_check_mark: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
-| `ErrorNext` | -- | :x: | :x: | Jump to the next error. |
-| `ErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
-| `FindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
-| `FindDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `FindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `FindDeclaration` | -- | :x: | :x: | Jump to declaration (the signature). |
-| `FindDeclarationInNewWindow` | -- | :x: | :x: | -- |
-| `FindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `FindTypeDefinition` | -- | :x: | :x: | Jump to the type definition of the expression. |
-| `FindTypeDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `FindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `Search` | -- | :x: | :x: | Searches for a value by its type or polarity to included in the current buffer. |
-| `SearchDefinition` | -- | :x: | :x: | Searches for a value definition by its type or polarity. |
-| `SearchDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `SearchDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `SearchDeclaration` | -- | :x: | :x: | Searches for a value declaration by its type or polarity. |
-| `SearchDeclarationInNewWindow` | -- | :x: | :x: | -- |
-| `SearchDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
-| `Document` | -- | :x: | :x: | Documents the expression below the cursor. |
-| `Destruct` | -- | :x: | :x: | Allows you to generate and manipulate pattern matching expressions. |
-| `TypeExpression` | -- | :x: | :x: | -- |
-| `TypeEnclosing` | -- | :x: | :x: | Display the type of the selection and start a "type enclosing" session. |
-| `Occurences` | -- | :x: | :x: | Returns all occurrences of the identifier under the cursor. |
-| `Rename` | -- | :x: | :x: | Rename the symbol under the cursor. |
+| `OCamlJumpPrevHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the previous hole. |
+| `OCamlJumpNextHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the next hole. |
+| `OCamlConstruct` | -- | :white_check_mark: | :white_check_mark: | Open up a list of valid substitutions to fill the hole. |
+| `OCamlJump` | -- | :white_check_mark: | :x: | Jumps to the referenced expression. |
+| `OCamlPhraseNext` | -- | :white_check_mark: | :x: | Jump to the beginnning of the previous phrase. |
+| `OCamlPhrasePrev` | -- | :white_check_mark: | :x: | Jump to the beginning of the next phrase. |
+| `OCamlInferIntf` | -- | :white_check_mark: | :x: | Infer the interface for the current implementation file. |
+| `OCamlAlternateFile` | -- | :white_check_mark: | :x: | Switch from the implementation file to the interface file and vice versa. |
+| `OCamlFindIdentifierDefinition` | -- | :white_check_mark: | :x: | -- |
+| `OCamlFindIdentifierDeclaration` | -- | :white_check_mark: | :x: | -- |
+| `OCamlDocumentIdentifier` | -- | :white_check_mark: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
+| `OCamlErrorNext` | -- | :x: | :x: | Jump to the next error. |
+| `OCamlErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
+| `OCamlFindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
+| `OCamlFindDefinitionInNewWindow` | -- | :x: | :x: | -- |
+| `OCamlFindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `OCamlFindDeclaration` | -- | :x: | :x: | Jump to declaration (the signature). |
+| `OCamlFindDeclarationInNewWindow` | -- | :x: | :x: | -- |
+| `OCamlFindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `OCamlFindTypeDefinition` | -- | :x: | :x: | Jump to the type definition of the expression. |
+| `OCamlFindTypeDefinitionInNewWindow` | -- | :x: | :x: | -- |
+| `OCamlFindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `OCamlSearch` | -- | :x: | :x: | Searches for a value by its type or polarity to included in the current buffer. |
+| `OCamlSearchDefinition` | -- | :x: | :x: | Searches for a value definition by its type or polarity. |
+| `OCamlSearchDefinitionInNewWindow` | -- | :x: | :x: | -- |
+| `OCamlSearchDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
+| `OCamlSearchDeclaration` | -- | :x: | :x: | Searches for a value declaration by its type or polarity. |
+| `OCamlSearchDeclarationInNewWindow` | -- | :x: | :x: | -- |
+| `OCamlSearchDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
+| `OCamlDocument` | -- | :x: | :x: | Documents the expression below the cursor. |
+| `OCamlDestruct` | -- | :x: | :x: | Allows you to generate and manipulate pattern matching expressions. |
+| `OCamlTypeExpression` | -- | :x: | :x: | -- |
+| `OCamlTypeEnclosing` | -- | :x: | :x: | Display the type of the selection and start a "type enclosing" session. |
+| `OCamlOccurences` | -- | :x: | :x: | Returns all occurrences of the identifier under the cursor. |
+| `OCamlRename` | -- | :x: | :x: | Rename the symbol under the cursor. |
 
 ### Construct expression
 
 Enables you to navigate between typed-holes (`_`) in a document and
 interactively substitute them:
 
-- `JumpPrevHole`: jump to the next hole
-- `JumpNextHole`: jump to the previous hole
-- `Construct`: open up a list of valid substitutions to fill the hole
+- `OCamlJumpPrevHole`: jump to the next hole
+- `OCamlJumpNextHole`: jump to the previous hole
+- `OCamlConstruct`: open up a list of valid substitutions to fill the hole
 
 ![Construct example](media/construct.gif)
 
@@ -85,12 +85,12 @@ Allows you to navigate semantically in a buffer, passing from an expression to
 the parent `let`, the parent `module`, the parent `fun` and the parent `match` expression.
 It is also possible to navigate between pattern matching cases:
 
-- `Jump`: jumps to the referenced expression
+- `OCamlJump`: jumps to the referenced expression
 
 ![Jump example](media/jump.gif)
 
-- `PhrasePrev`: jump to the beginning of the previous phrase
-- `PhraseNext`: jump to the beginning of the next phrase
+- `OCamlPhrasePrev`: jump to the beginning of the previous phrase
+- `OCamlPhraseNext`: jump to the beginning of the next phrase
 
 ![Phrase example](media/phrase.gif)
 
@@ -113,8 +113,8 @@ generate it.
 
 It is possible to directly enter the name of an identifier (definition or declaration) using the following commands.
 
-- `FindIdentifierDefinition`
-- `FindIdentifierDeclaration`
+- `OCamlFindIdentifierDefinition`
+- `OCamlFindIdentifierDeclaration`
 
 ![Finds example](media/find.gif)
 
@@ -122,6 +122,6 @@ It is possible to directly enter the name of an identifier (definition or declar
 
 It is possible to get the document of the identifier given in the argument.
 
-- `DocumentIdentifier`
+- `OCamlDocumentIdentifier`
 
 ![Documentation example](media/doc.gif)
