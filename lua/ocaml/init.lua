@@ -2,6 +2,9 @@ local M = {}
 
 local api = vim.api
 
+-- 5.1 Lua JUT Runtime compatibility
+table.unpack = table.unpack or unpack
+
 local function get_server()
   local clients = vim.lsp.get_clients({ name = "ocamllsp" })
   for _, client in ipairs(clients) do
@@ -21,7 +24,7 @@ end
 
 function M.jump_to_hole(dir, range)
   with_server(function(client)
-    local row, col = unpack(api.nvim_win_get_cursor(0))
+    local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
       position = { line = row - 1, character = col },
@@ -40,7 +43,7 @@ end
 
 function M.construct(input)
   with_server(function(client)
-    local row, col = unpack(api.nvim_win_get_cursor(0))
+    local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
       position = { line = row - 1, character = col },
@@ -105,7 +108,7 @@ end
 
 function M.phrase(dir)
   with_server(function(client)
-    local row, col = unpack(api.nvim_win_get_cursor(0))
+    local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
       command = "phrase",
@@ -200,7 +203,7 @@ function M.switch_file()
 end
 
 local function find_identifier(client, identifier, method)
-  local row, col = unpack(api.nvim_win_get_cursor(0))
+  local row, col = table.unpack(api.nvim_win_get_cursor(0))
   local params = {
     uri = vim.uri_from_bufnr(0),
     command = "locate",
@@ -255,7 +258,7 @@ function M.find_identifier_decl(identifier)
 end
 
 function M.document_identifier(identifier)
-  local row, col = unpack(api.nvim_win_get_cursor(0))
+  local row, col = table.unpack(api.nvim_win_get_cursor(0))
   with_server(function(client)
     local params = {
       textDocument = { uri = vim.uri_from_bufnr(0) },
