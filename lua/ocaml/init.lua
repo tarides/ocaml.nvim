@@ -1,5 +1,7 @@
 local M = {}
 
+local ui = require("ocaml.ui")
+
 local api = vim.api
 
 -- 5.1 Lua JUT Runtime compatibility
@@ -275,6 +277,44 @@ function M.document_identifier(identifier)
   end)
 end
 
+function get_name_typ(l)
+  local acc = {}
+  for i = 1, #l do
+    acc[i] = l[i].name .. " " .. l[i].typ
+  end
+  return acc
+end
+
+function search_definition_declaration(query, f)
+  with_server(function(client)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local params = {
+      textDocument = { uri = vim.uri_from_bufnr(0) },
+      position = { line = row, character = col },
+      query = query,
+      limit = 10,
+      with_doc = true,
+      doc_format = "plaintext",
+    }
+    local result = client.request_sync("ocamllsp/typeSearch", params, 1000)
+    if not (result and result.result) then
+      vim.notify("Unable to find type " .. query .. ".", vim.log.levels.WARN)
+      return
+    end
+    local choices = result.result
+    ui.selecting_floating_window(get_name_typ(choices), function(id)
+      local n = choices[id].name
+      vim.defer_fn(function()
+        f(n)
+      end, 10)
+    end)
+  end)
+end
+
+function ocaml.search_declaration(query)
+  search_definition_declaration(query, ocaml.find_identifier_decl)
+end
+
 --- Initialize the OCaml plugin
 ---@param config any
 function M.setup(config)
@@ -327,6 +367,11 @@ function M.setup(config)
       api.nvim_create_user_command("DocumentIdentifier", function(opts)
         M.document_identifier(opts.args)
       end, { nargs = 1 })
+
+      vim.api.nvim_create_user_command("SearchDeclaration", function(opts)
+        ocaml.search_declaration(opts.args)
+      end, { nargs = 1 })
+
     end,
   })
 end
