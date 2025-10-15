@@ -1,4 +1,4 @@
-local ocaml = {}
+local M = {}
 
 local function get_server()
   local clients = vim.lsp.get_clients({ name = "ocamllsp" })
@@ -17,7 +17,7 @@ local function with_server(callback)
   vim.notify("No OCaml LSP server available", vim.log.levels.ERROR)
 end
 
-function ocaml.jump_to_hole(dir, range)
+function M.jump_to_hole(dir, range)
   with_server(function(client)
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local params = {
@@ -36,7 +36,7 @@ function ocaml.jump_to_hole(dir, range)
   end)
 end
 
-function ocaml.construct(input)
+function M.construct(input)
   with_server(function(client)
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local params = {
@@ -77,7 +77,7 @@ function ocaml.construct(input)
   end)
 end
 
-function ocaml.jump(target)
+function M.jump(target)
   with_server(function(client)
     local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
     local result = client.request_sync("ocamllsp/jump", params, 1000)
@@ -101,7 +101,7 @@ function ocaml.jump(target)
   end)
 end
 
-function ocaml.phrase(dir)
+function M.phrase(dir)
   with_server(function(client)
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local params = {
@@ -154,7 +154,7 @@ local function load_pair(buf)
   unsafe_toggle_ml_mli(buf)
 end
 
-function ocaml.infer_intf()
+function M.infer_intf()
   local fname = vim.api.nvim_buf_get_name(0)
   if not (fname:match("%.mli$")) then
     vim.notify("Not an interface file.", vim.log.levels.WARN)
@@ -181,7 +181,7 @@ function ocaml.infer_intf()
   end)
 end
 
-function ocaml.switch_file()
+function M.switch_file()
   with_server(function(client)
     local result = client.request_sync("ocamllsp/switchImplIntf", { vim.uri_from_bufnr(0) }, 1000)
     if not (result and result.result) then
@@ -224,7 +224,7 @@ local function parse(data)
   return parsed
 end
 
-function ocaml.find_identifier_def(identifier)
+function M.find_identifier_def(identifier)
   with_server(function(client)
     local result = find_identifier(client, identifier, "implementation")
     if not (result and result.result) then
@@ -238,7 +238,7 @@ function ocaml.find_identifier_def(identifier)
   end)
 end
 
-function ocaml.find_identifier_decl(identifier)
+function M.find_identifier_decl(identifier)
   with_server(function(client)
     local result = find_identifier(client, identifier, "interface")
     if not (result and result.result) then
@@ -252,7 +252,7 @@ function ocaml.find_identifier_decl(identifier)
   end)
 end
 
-function ocaml.document_identifier(identifier)
+function M.document_identifier(identifier)
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
   with_server(function(client)
     local params = {
@@ -272,7 +272,7 @@ end
 
 --- Initialize the OCaml plugin
 ---@param config any
-function ocaml.setup(config)
+function M.setup(config)
   -- No config yet, itt can be ignored.
   local _ = config
 
@@ -280,49 +280,50 @@ function ocaml.setup(config)
     pattern = { "ocaml", "ocaml.interface" },
     callback = function()
       vim.api.nvim_buf_create_user_command(0, "JumpNextHole", function()
-        ocaml.jump_to_hole("next")
+        M.jump_to_hole("next")
       end, {})
 
       vim.api.nvim_buf_create_user_command(0, "JumpPrevHole", function()
-        ocaml.jump_to_hole("prev")
+        M.jump_to_hole("prev")
       end, {})
 
       vim.api.nvim_create_user_command("Construct", function()
-        ocaml.construct()
+        M.construct()
       end, {})
 
       vim.api.nvim_create_user_command("Jump", function(opts)
-        ocaml.jump(opts.args)
+        M.jump(opts.args)
       end, { nargs = 1 })
 
       vim.api.nvim_create_user_command("PhrasePrev", function()
-        ocaml.phrase("prev")
+        M.phrase("prev")
       end, {})
 
       vim.api.nvim_create_user_command("PhraseNext", function()
-        ocaml.phrase("next")
+        M.phrase("next")
       end, {})
 
       vim.api.nvim_create_user_command("InferIntf", function()
-        require("ocaml").infer_intf()
+        M.infer_intf()
       end, {})
 
       vim.api.nvim_create_user_command("AlternateFile", function()
-        require("ocaml").switch_file()
+        M.switch_file()
       end, {})
 
       vim.api.nvim_create_user_command("FindIdentifierDefinition", function(opts)
-        require("ocaml").find_identifier_def(opts.args)
+        M.find_identifier_def(opts.args)
       end, { nargs = 1 })
 
       vim.api.nvim_create_user_command("FindIdentifierDeclaration", function(opts)
-        require("ocaml").find_identifier_decl(opts.args)
+        M.find_identifier_decl(opts.args)
       end, { nargs = 1 })
 
       vim.api.nvim_create_user_command("DocumentIdentifier", function(opts)
-        require("ocaml").document_identifier(opts.args)
+        M.document_identifier(opts.args)
       end, { nargs = 1 })
     end,
   })
 end
-return ocaml
+
+return M
