@@ -23,7 +23,7 @@ local config = {
     type_enclosing_shrink = "<Down>",
     type_enclosing_increase = "<Right>",
     type_enclosing_decrease = "<Left>",
-  }
+  },
 }
 
 local function get_server()
@@ -647,9 +647,19 @@ function M.setup(user_config)
         M.search_definition(opts.args)
       end, { nargs = 1 })
 
-      api.nvim_create_user_command("TypeExpression", function(opts)
+      api.nvim_create_user_command("OCamlTypeExpression", function(opts)
         M.type_expression(opts.args)
       end, { nargs = 1 })
+
+      api.nvim_create_user_command("OCamlTypeEnclosing", function()
+        M.enter_type_enclosing()
+      end, {})
+      vim.keymap.set(
+        "n",
+        config.keymaps.type_enclosing,
+        "<CMD>OCamlTypeEnclosing<CR>",
+        { desc = "OCaml: Display the type under the cursor and start a `type enclosing session`" }
+      )
     end,
   })
 end
