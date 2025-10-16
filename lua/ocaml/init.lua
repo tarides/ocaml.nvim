@@ -133,21 +133,26 @@ function M.jump(target)
   end)
 end
 
+function merlinCallCompatible(client, command, args)
+  local params = {
+    uri = vim.uri_from_bufnr(0),
+    command = command,
+    args = args,
+    resultAsSexp = false,
+  }
+  return client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
+end
+
 function M.phrase(dir)
   with_server(function(client)
     local row, col = table.unpack(api.nvim_win_get_cursor(0))
-    local params = {
-      uri = vim.uri_from_bufnr(0),
-      command = "phrase",
-      args = {
+    local args = {
         "-position",
         row .. ":" .. col,
         "-target",
         dir,
-      },
-      resultAsSexp = false,
     }
-    local result = client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
+    local result = merlinCallCompatible(client, "phrase", args)
     if not (result and result.result) then
       vim.notify("No OCaml phrase found at cursor.", vim.log.levels.WARN)
       return
