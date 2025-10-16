@@ -120,10 +120,10 @@ function M.phrase(dir)
   with_server(function(client)
     local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local args = {
-        "-position",
-        row .. ":" .. col,
-        "-target",
-        dir,
+      "-position",
+      row .. ":" .. col,
+      "-target",
+      dir,
     }
     local result = merlinCallCompatible(client, "phrase", args)
     if not (result and result.result) then
@@ -280,6 +280,30 @@ function M.document_identifier(identifier)
   end)
 end
 
+function M.type_expression(expression)
+  with_server(function(client)
+    local row, col = table.unpack(api.nvim_win_get_cursor(0))
+    local args = {
+      "-position",
+      row .. ":" .. col,
+      "-expression",
+      expression,
+    }
+    local result = merlinCallCompatible(client, "type-expression", args)
+    if not (result and result.result) then
+      vim.notify("Unable to find the type of " .. expression, vim.log.levels.WARN)
+      return
+    end
+    local data = result.result.result
+    local ok, parsed = pcall(vim.fn.json_decode, data)
+    if not ok or not parsed.value or not parsed.value then
+      vim.notify("Invalid response from server.", vim.log.levels.ERROR)
+      return
+    end
+    print(parsed.value)
+  end)
+end
+
 --- Initialize the OCaml plugin
 ---@param config any
 function M.setup(config)
@@ -331,6 +355,10 @@ function M.setup(config)
 
       api.nvim_create_user_command("DocumentIdentifier", function(opts)
         M.document_identifier(opts.args)
+      end, { nargs = 1 })
+
+      api.nvim_create_user_command("TypeExpression", function(opts)
+        M.type_expression(opts.args)
       end, { nargs = 1 })
     end,
   })
