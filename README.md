@@ -43,6 +43,7 @@ All of the commands are detailed and illustrated in the following sections.
 | `FindIdentifierDefinition` | -- | :white_check_mark: | :x: | -- |
 | `FindIdentifierDeclaration` | -- | :white_check_mark: | :x: | -- |
 | `DocumentIdentifier` | -- | :white_check_mark: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
+| `TypeExpression` | -- | :white_check_mark: | :x: | -- |
 | `ErrorNext` | -- | :x: | :x: | Jump to the next error. |
 | `ErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
 | `FindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
@@ -63,7 +64,6 @@ All of the commands are detailed and illustrated in the following sections.
 | `SearchDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
 | `Document` | -- | :x: | :x: | Documents the expression below the cursor. |
 | `Destruct` | -- | :x: | :x: | Allows you to generate and manipulate pattern matching expressions. |
-| `TypeExpression` | -- | :x: | :x: | -- |
 | `TypeEnclosing` | -- | :x: | :x: | Display the type of the selection and start a "type enclosing" session. |
 | `Occurences` | -- | :x: | :x: | Returns all occurrences of the identifier under the cursor. |
 | `Rename` | -- | :x: | :x: | Rename the symbol under the cursor. |
@@ -125,3 +125,9 @@ It is possible to get the document of the identifier given in the argument.
 - `DocumentIdentifier`
 
 ![Documentation example](media/doc.gif)
+
+### Type-expression and Type-enclosing
+
+- `TypeExpression`
+
+![TypeExpression example](media/typeexpr.gif)
