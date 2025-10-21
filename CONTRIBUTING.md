@@ -14,10 +14,3 @@ All contributions are welcome whether it’s fixing a bug, improving documentati
    - Create a descriptive branch
    - Open a Pull Request with your changes (it will be reviewed)
 
-### Running the Tests
-
-To run the tests, use the following command from the project root.
-
-```bash
-nvim --headless -u tests/init.lua
-```
