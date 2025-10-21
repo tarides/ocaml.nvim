@@ -1,19 +1,103 @@
 # ocaml.nvim
 
-`ocaml.nvim` provides direct access to advanced `ocamllsp` features without
-requiring complex editor-side logic.
-`ocaml.nvim` aims to offer a fast, simple, and modular workflow in Neovim.
-This plugin gives access to all the advanced Merlin commands not supported by
-generic LSP clients, such as Construct, alternate between `.mli` and `.ml`
-files, etc.
+## What is ocaml.nvim?
+`ocaml.nvim` is a Neovim plugin that enhances the OCaml development experience.
+It should be used in addition to the LSP plugin of Neovim, `lsp-config,` and especially the OCaml server, `ocamllsp.`
+`ocamllsp` relies on Merlin's editions' features that go beyond the standard of LSP.
+Th# ocaml.nvim
 
-## Installation using `lazy.nvim`
+## What is ocaml.nvim?
+`ocaml.nvim` is a Neovim plugin that enhances the OCaml development experience.
+It should be used in addition to the LSP plugin of Neovim, `lsp-config,` and especially the OCaml server, `ocamllsp.`
+`ocamllsp` relies on Merlin's editions' features that go beyond the standard of LSP.
+This is why this plugin adds advanced features to provide Neovim users with the best user experience of OCaml.
+More than adding new features encoded with custom requests, it also simplifies the use of some code actions with a specific keybind.
 
-Add the plugin to your `lazy.nvim` setup:
+## Table of contents
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Customization](#customization)
+- [Contributing](#contributing)
+
+## Getting Started
+This section guides you through setting up the essential components required to enable OCaml-specific editing features.
+You will install the OCaml language server (`ocamllsp`), configure it through Neovim's LSP client (`nvim-lspconfig`), and finally add the `ocaml.nvim` plugin to obtain the advanced features.
+
+#### LSP server for OCaml, [`ocamllsp`](https://github.com/ocaml/ocaml-lsp)
+Using [Opam](https://github.com/ocaml/opam)
+```bash
+$ opam install ocaml-lsp-server
+```
+
+From source
+```bash
+$ git clone --recurse-submodules http://github.com/ocaml/ocaml-lsp.git
+$ cd ocaml-lsp
+$ make install
+```
+
+Please read the dedicated [README.md](https://github.com/ocaml/ocaml-lsp) for more details.
+
+#### [`lsp-config`](https://github.com/neovim/nvim-lspconfig) for OCaml
+Using [vim-plug](https://github.com/junegunn/vim-plug)
+```viml
+Plug 'neovim/nvim-lspconfig'
+```
+
+Then in your `init.lua`,
+```lua
+require("lspconfig").ocamllsp.setup {}
+```
+
+Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
+```lua
+use {
+  "neovim/nvim-lspconfig",
+  config = function()
+    local lspconfig = require("lspconfig")
+    lspconfig.ocamllsp.setup {}
+  end,
+}
+```
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+```lua
+require("lazy").setup({
+  {"neovim/nvim-lspconfig",
+    event = {"BufReadPre", "BufNewFile"},
+    config = function()
+      local lspconfig = require("lspconfig")
+      -- OCaml LSP setup
+      lspconfig.ocamllsp.setup {}
+    end,
+  }
+```
+
+Please read the dedicated [README.md](https://github.com/neovim/nvim-lspconfig) for more details.
+
+#### `ocaml.nvim`
+Using [vim-plug](https://github.com/junegunn/vim-plug)
+
+```viml
+Plug 'tarides/ocaml.nvim'
+```
+
+Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
+
+```lua
+use {
+  "tarides/ocaml.nvim",
+  config = function()
+    require("ocaml").setup()
+  end
+}
+```
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 require("lazy").setup({
-  { "tarides/ocaml.nvim",
+  {"tarides/ocaml.nvim",
     config = function()
       require("ocaml").setup()
     end
@@ -21,107 +105,73 @@ require("lazy").setup({
 })
 ```
 
-## Features
-Here is the list of commands offered by `ocaml.nvim` and their key binding.
-All of the commands are detailed and illustrated in the following sections.
+## Usage
+This section lists all the functions available in Neovim to streamline your OCaml development workflow.
+It covers both the functions provided by this plugin and those accessible via the OCaml LSP when used with `lsp-config`.
+First, an overview table summarizes all available commands. Detailed explanations and examples are provided below, including links to the corresponding sections for more context.
 
-> [!IMPORTANT]
-> This section only covers features specific to `ocaml.nvim`.
-> However, the builtin LSP of Neovim already provides standards commands such as
-> go-to-definition and hover documentation.
+### Commands Overview
+| Command                            | Action                                                     | Detail                                                   | Plugin     |
+| ---------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------- | ---------- |
+| `:JumpPrevHole`                    | Jump to the previous hole.                                 | [Holes handling](#holes-handling)                        | ocaml.nvim |
+| `:JumpNextHole`                    | Jump to the next hole.                                     | [Holes handling](#holes-handling)                        | ocaml.nvim |
+| `:Construct`                       | Open a list of valid substitutions to fill the hole.       | [Holes handling](#holes-handling)                        | ocaml.nvim |
+| `:Jump` arg                        | Jump to the referenced expression by `arg`.                | [Code navigation](#code-navigation)                      | ocaml.nvim |
+| `:PhraseNext`                      | Jump to the beginning of the next phrase.                  | [Code navigation](#code-navigation)                      | ocaml.nvim |
+| `:PhrasePrev`                      | Jump to the beginning of the previous phrase.              | [Code navigation](#code-navigation)                      | ocaml.nvim |
+| `:InferIntf`                       | Infer the interface of the associated implementation file. | [Interface file management](#interface-file-management)  | ocaml.nvim |
+| `:AlternateFile`                   | Alternate between `.ml` and `.mli`.                        | [Interface file management](#interface-file-management)  | ocaml.nvim |
+| `:FindIdentifierDefinition` arg    | Open the definition of the identifier `arg`.               | [Identifier information](#identifier-information)        | ocaml.nvim |
+| `:FindIdentifierDeclaration` arg   | Open to the identifier `arg` declaration.                  | [Identifier information](#identifier-information)        | ocaml.nvim |
+| `:DocumentIdentifier` arg          | Display the identifier `arg` documentation.                | [Identifier information](#identifier-information)        | ocaml.nvim |
 
-| Command | Default Binding | Available | Tests | Description |
-| -- | -- | -- | -- | -- |
-| `JumpPrevHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the previous hole. |
-| `JumpNextHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the next hole. |
-| `Construct` | -- | :white_check_mark: | :white_check_mark: | Open up a list of valid substitutions to fill the hole. |
-| `Jump` | -- | :white_check_mark: | :x: | Jumps to the referenced expression. |
-| `PhraseNext` | -- | :white_check_mark: | :x: | Jump to the beginnning of the previous phrase. |
-| `PhrasePrev` | -- | :white_check_mark: | :x: | Jump to the beginning of the next phrase. |
-| `InferIntf` | -- | :white_check_mark: | :x: | Infer the interface for the current implementation file. |
-| `AlternateFile` | -- | :white_check_mark: | :x: | Switch from the implementation file to the interface file and vice versa. |
-| `FindIdentifierDefinition` | -- | :white_check_mark: | :x: | -- |
-| `FindIdentifierDeclaration` | -- | :white_check_mark: | :x: | -- |
-| `DocumentIdentifier` | -- | :white_check_mark: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
-| `ErrorNext` | -- | :x: | :x: | Jump to the next error. |
-| `ErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
-| `FindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
-| `FindDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `FindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `FindDeclaration` | -- | :x: | :x: | Jump to declaration (the signature). |
-| `FindDeclarationInNewWindow` | -- | :x: | :x: | -- |
-| `FindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `FindTypeDefinition` | -- | :x: | :x: | Jump to the type definition of the expression. |
-| `FindTypeDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `FindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `Search` | -- | :x: | :x: | Searches for a value by its type or polarity to included in the current buffer. |
-| `SearchDefinition` | -- | :x: | :x: | Searches for a value definition by its type or polarity. |
-| `SearchDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `SearchDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `SearchDeclaration` | -- | :x: | :x: | Searches for a value declaration by its type or polarity. |
-| `SearchDeclarationInNewWindow` | -- | :x: | :x: | -- |
-| `SearchDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
-| `Document` | -- | :x: | :x: | Documents the expression below the cursor. |
-| `Destruct` | -- | :x: | :x: | Allows you to generate and manipulate pattern matching expressions. |
-| `TypeExpression` | -- | :x: | :x: | -- |
-| `TypeEnclosing` | -- | :x: | :x: | Display the type of the selection and start a "type enclosing" session. |
-| `Occurences` | -- | :x: | :x: | Returns all occurrences of the identifier under the cursor. |
-| `Rename` | -- | :x: | :x: | Rename the symbol under the cursor. |
+### Details
 
-### Construct expression
-
-Enables you to navigate between typed-holes (`_`) in a document and
-interactively substitute them:
-
-- `JumpPrevHole`: jump to the next hole
-- `JumpNextHole`: jump to the previous hole
-- `Construct`: open up a list of valid substitutions to fill the hole
+#### Holes handling
+Typed holes (`_`) are incomplete parts of your OCaml code where the compiler expects an expression.
+- `:JumpPrevHole` jumps to the previous hole in the buffer.
+- `:JumpNextHole` jumps to the next hole in the buffer.
+- `:Construct` opens a list of valid expressions that can replace the hole under the cursor. Type inference is required to propose correct substitutions.
 
 ![Construct example](media/construct.gif)
 
-### Source browsing
-
-Allows you to navigate semantically in a buffer, passing from an expression to
-the parent `let`, the parent `module`, the parent `fun` and the parent `match` expression.
-It is also possible to navigate between pattern matching cases:
-
-- `Jump`: jumps to the referenced expression
+#### Code navigation
+These functions help you navigate semantically in the buffer.
+- `:Jump arg` jumps to the expression or declaration referenced by `arg`. For example, this could be `:Jump let` to jump to the
 
 ![Jump example](media/jump.gif)
 
-- `PhrasePrev`: jump to the beginning of the previous phrase
-- `PhraseNext`: jump to the beginning of the next phrase
+A phrase in OCaml is a complete syntactic unit, such as a definition, expression, or declaration, that can be evaluated or compiled independently.
+- `:PhrasePrev` jumps to the beginning of the previous phrase in the code.
+- `:PhraseNext` jumps to the beginning of the next phrase.
 
 ![Phrase example](media/phrase.gif)
 
-### Infer interface
-
-Used to infer the type of an interface file. If the buffer is not empty,
-a prompt will ask for confirmation to overwrite the buffer contents.
+#### Interface file management
+These functions help alternate between the `.ml` and `.mli` files and infer the interface.
+- `:InferIntf` infer the type of an interface file from its implementation.
 
 ![Infer example](media/infer.gif)
 
-### Find alternate file
+- `:AlternateFile` switch from the implementation file to the interface file and vice versa.
 
-Quickly switch from the implementation file to the interface file and
-vice versa. If the interface file does not exist, a prompt can be used to
-generate it.
-
-![Alternate file example](media/switch.gif)
-
-### Find identifiers definition/declaration
-
-It is possible to directly enter the name of an identifier (definition or declaration) using the following commands.
-
-- `FindIdentifierDefinition`
-- `FindIdentifierDeclaration`
+#### Identifier information
+These functions provide information about a specific identifier specified by `arg`.
+`arg` could be, for example, `List.hd` or `Sys.time`.
+- `:FindIdentifierDefinition arg` opens the identifier `arg` definition.
+- `:FindIdentifierDeclaration arg` opens the identifier `arg` declaration.
 
 ![Finds example](media/find.gif)
 
-### Get documentation
-
-It is possible to get the document of the identifier given in the argument.
-
-- `DocumentIdentifier`
+- `:DocumentIdentifier arg` shows the identifier `arg` documentation.
 
 ![Documentation example](media/doc.gif)
+
+## Customization
+:construction_worker: ToDo
+
+## Contributing
+
+All contributions are welcome! Just open a pull request.
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md)
+
