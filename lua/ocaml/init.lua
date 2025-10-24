@@ -133,14 +133,14 @@ function M.phrase(dir)
       vim.notify("Invalid response from server.", vim.log.levels.ERROR)
       return
     end
-    local line = parsed.value.pos.line
-    local col = parsed.value.pos.col
+    local l = parsed.value.pos.line
+    local c = parsed.value.pos.col
 
-    if line > api.nvim_buf_line_count(0) then
+    if l > api.nvim_buf_line_count(0) then
       vim.notify("No further phrases found.", vim.log.levels.INFO)
       return
     end
-    api.nvim_win_set_cursor(0, { line, col })
+    api.nvim_win_set_cursor(0, { l, c })
   end)
 end
 
@@ -240,6 +240,10 @@ function M.find_identifier_def(identifier)
     end
     local data = result.result.result
     local parsed = parse(data)
+    if parsed == nil then
+      vim.notify("Failed to parse.", vim.log.levels.ERROR)
+      return
+    end
     vim.cmd.split(parsed.value.file)
     api.nvim_win_set_cursor(0, { parsed.value.pos.line, parsed.value.pos.col })
   end)
@@ -254,6 +258,10 @@ function M.find_identifier_decl(identifier)
     end
     local data = result.result.result
     local parsed = parse(data)
+    if parsed == nil then
+      vim.notify("Failed to parse.", vim.log.levels.ERROR)
+      return
+    end
     vim.cmd.split(parsed.value.file)
     api.nvim_win_set_cursor(0, { parsed.value.pos.line, parsed.value.pos.col })
   end)
@@ -277,7 +285,7 @@ function M.document_identifier(identifier)
   end)
 end
 
-function get_name_typ(l)
+local function get_name_typ(l)
   local acc = {}
   for i = 1, #l do
     acc[i] = l[i].name .. " " .. l[i].typ
@@ -285,9 +293,9 @@ function get_name_typ(l)
   return acc
 end
 
-function search_definition_declaration(query, f)
+local function search_definition_declaration(query, f)
   with_server(function(client)
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local row, col = table.unpack(vim.api.nvim_win_get_cursor(0))
     local params = {
       textDocument = { uri = vim.uri_from_bufnr(0) },
       position = { line = row, character = col },
@@ -328,48 +336,48 @@ function M.setup(config)
   api.nvim_create_autocmd("FileType", {
     pattern = { "ocaml", "ocaml.interface" },
     callback = function()
-      vim.api.nvim_buf_create_user_command(0, "OCamlJumpNextHole", function()
-        ocaml.jump_to_hole("next")
+      vim.api.nvim_create_user_command("OCamlJumpNextHole", function()
+        M.jump_to_hole("next")
       end, {})
 
-      vim.api.nvim_buf_create_user_command(0, "OCamlJumpPrevHole", function()
-        ocaml.jump_to_hole("prev")
+      vim.api.nvim_create_user_command("OCamlJumpPrevHole", function()
+        M.jump_to_hole("prev")
       end, {})
 
       vim.api.nvim_create_user_command("OCamlConstruct", function()
-        ocaml.construct()
+        M.construct()
       end, {})
 
       vim.api.nvim_create_user_command("OCamlJump", function(opts)
-        ocaml.jump(opts.args)
+        M.jump(opts.args)
       end, { nargs = 1 })
 
       vim.api.nvim_create_user_command("OCamlPhrasePrev", function()
-        ocaml.phrase("prev")
+        M.phrase("prev")
       end, {})
 
       vim.api.nvim_create_user_command("OCamlPhraseNext", function()
-        ocaml.phrase("next")
+        M.phrase("next")
       end, {})
 
       vim.api.nvim_create_user_command("OCamlInferIntf", function()
-        require("ocaml").infer_intf()
+        M.infer_intf()
       end, {})
 
       vim.api.nvim_create_user_command("OCamlAlternateFile", function()
-        require("ocaml").switch_file()
+        M.switch_file()
       end, {})
 
       vim.api.nvim_create_user_command("OCamlFindIdentifierDefinition", function(opts)
-        require("ocaml").find_identifier_def(opts.args)
+        M.find_identifier_def(opts.args)
       end, { nargs = 1 })
 
       vim.api.nvim_create_user_command("OCamlFindIdentifierDeclaration", function(opts)
-        require("ocaml").find_identifier_decl(opts.args)
+        M.find_identifier_decl(opts.args)
       end, { nargs = 1 })
 
       vim.api.nvim_create_user_command("OCamlDocumentIdentifier", function(opts)
-        require("ocaml").document_identifier(opts.args)
+        M.document_identifier(opts.args)
       end, { nargs = 1 })
     end,
   })
