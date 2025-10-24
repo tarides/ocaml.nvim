@@ -125,3 +125,10 @@ It is possible to get the document of the identifier given in the argument.
 - `OCamlDocumentIdentifier`
 
 ![Documentation example](media/doc.gif)
+
+### Search declaration/definition
+
+- `SearchDeclaration` searches for a value by its type or polarity and jump to its declaration
+- `SearchDefinition` searches for a value by its type or polarity and jump to its definition
+
+![Search example](media/search.gif)

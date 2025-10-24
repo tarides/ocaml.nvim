@@ -1,4 +1,11 @@
-local ocaml = {}
+local M = {}
+
+local ui = require("ocaml.ui")
+
+local api = vim.api
+
+-- 5.1 Lua JUT Runtime compatibility
+table.unpack = table.unpack or unpack
 
 local function get_server()
   local clients = vim.lsp.get_clients({ name = "ocamllsp" })
@@ -17,9 +24,9 @@ local function with_server(callback)
   vim.notify("No OCaml LSP server available", vim.log.levels.ERROR)
 end
 
-function ocaml.jump_to_hole(dir, range)
+function M.jump_to_hole(dir, range)
   with_server(function(client)
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
       position = { line = row - 1, character = col },
@@ -32,13 +39,13 @@ function ocaml.jump_to_hole(dir, range)
       return
     end
     local hole_range = result.result
-    vim.api.nvim_win_set_cursor(0, { hole_range.start.line + 1, hole_range.start.character })
+    api.nvim_win_set_cursor(0, { hole_range.start.line + 1, hole_range.start.character })
   end)
 end
 
-function ocaml.construct(input)
+function M.construct(input)
   with_server(function(client)
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
       position = { line = row - 1, character = col },
@@ -53,7 +60,7 @@ function ocaml.construct(input)
     local choices = result.result.result
 
     local function apply_choice(choice)
-      vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col + 1, { choice })
+      api.nvim_buf_set_text(0, row - 1, col, row - 1, col + 1, { choice })
       local range = {
         start = { line = row - 1, character = col },
         ["end"] = { line = row - 1, character = col + #choice },
@@ -77,7 +84,7 @@ function ocaml.construct(input)
   end)
 end
 
-function ocaml.jump(target)
+function M.jump(target)
   with_server(function(client)
     local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
     local result = client.request_sync("ocamllsp/jump", params, 1000)
@@ -92,7 +99,7 @@ function ocaml.jump(target)
     end
     for _, j in ipairs(jumps) do
       if j.target == target then
-        vim.api.nvim_win_set_cursor(0, { j.position.line + 1, j.position.character })
+        api.nvim_win_set_cursor(0, { j.position.line + 1, j.position.character })
         return
       end
     end
@@ -101,9 +108,9 @@ function ocaml.jump(target)
   end)
 end
 
-function ocaml.phrase(dir)
+function M.phrase(dir)
   with_server(function(client)
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local params = {
       uri = vim.uri_from_bufnr(0),
       command = "phrase",
@@ -129,22 +136,22 @@ function ocaml.phrase(dir)
     local line = parsed.value.pos.line
     local col = parsed.value.pos.col
 
-    if line > vim.api.nvim_buf_line_count(0) then
+    if line > api.nvim_buf_line_count(0) then
       vim.notify("No further phrases found.", vim.log.levels.INFO)
       return
     end
-    vim.api.nvim_win_set_cursor(0, { line, col })
+    api.nvim_win_set_cursor(0, { line, col })
   end)
 end
 
 local function is_buf_empty(buf)
-  local line_count = vim.api.nvim_buf_line_count(buf)
-  local first_line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1]
+  local line_count = api.nvim_buf_line_count(buf)
+  local first_line = api.nvim_buf_get_lines(buf, 0, 1, false)[1]
   return first_line == "" and line_count == 1
 end
 
 local function unsafe_toggle_ml_mli(buf)
-  local fname = vim.api.nvim_buf_get_name(buf)
+  local fname = api.nvim_buf_get_name(buf)
   local target = fname:match("%.mli$") and fname:gsub("%.mli$", ".ml") or fname:gsub("%.ml$", ".mli")
   vim.cmd.edit(target)
 end
@@ -154,8 +161,8 @@ local function load_pair(buf)
   unsafe_toggle_ml_mli(buf)
 end
 
-function ocaml.infer_intf()
-  local fname = vim.api.nvim_buf_get_name(0)
+function M.infer_intf()
+  local fname = api.nvim_buf_get_name(0)
   if not (fname:match("%.mli$")) then
     vim.notify("Not an interface file.", vim.log.levels.WARN)
     return
@@ -174,14 +181,14 @@ function ocaml.infer_intf()
     end
     local intf_lines = vim.split(result.result, "\n", { plain = true })
     if is_buf_empty(0) then
-      vim.api.nvim_buf_set_lines(0, 0, -1, false, intf_lines)
+      api.nvim_buf_set_lines(0, 0, -1, false, intf_lines)
       return
     end
-    vim.api.nvim_buf_set_lines(0, 0, -1, false, intf_lines)
+    api.nvim_buf_set_lines(0, 0, -1, false, intf_lines)
   end)
 end
 
-function ocaml.switch_file()
+function M.switch_file()
   with_server(function(client)
     local result = client.request_sync("ocamllsp/switchImplIntf", { vim.uri_from_bufnr(0) }, 1000)
     if not (result and result.result) then
@@ -198,7 +205,7 @@ function ocaml.switch_file()
 end
 
 local function find_identifier(client, identifier, method)
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local row, col = table.unpack(api.nvim_win_get_cursor(0))
   local params = {
     uri = vim.uri_from_bufnr(0),
     command = "locate",
@@ -224,7 +231,7 @@ local function parse(data)
   return parsed
 end
 
-function ocaml.find_identifier_def(identifier)
+function M.find_identifier_def(identifier)
   with_server(function(client)
     local result = find_identifier(client, identifier, "implementation")
     if not (result and result.result) then
@@ -234,11 +241,11 @@ function ocaml.find_identifier_def(identifier)
     local data = result.result.result
     local parsed = parse(data)
     vim.cmd.split(parsed.value.file)
-    vim.api.nvim_win_set_cursor(0, { parsed.value.pos.line, parsed.value.pos.col })
+    api.nvim_win_set_cursor(0, { parsed.value.pos.line, parsed.value.pos.col })
   end)
 end
 
-function ocaml.find_identifier_decl(identifier)
+function M.find_identifier_decl(identifier)
   with_server(function(client)
     local result = find_identifier(client, identifier, "interface")
     if not (result and result.result) then
@@ -248,12 +255,12 @@ function ocaml.find_identifier_decl(identifier)
     local data = result.result.result
     local parsed = parse(data)
     vim.cmd.split(parsed.value.file)
-    vim.api.nvim_win_set_cursor(0, { parsed.value.pos.line, parsed.value.pos.col })
+    api.nvim_win_set_cursor(0, { parsed.value.pos.line, parsed.value.pos.col })
   end)
 end
 
-function ocaml.document_identifier(identifier)
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+function M.document_identifier(identifier)
+  local row, col = table.unpack(api.nvim_win_get_cursor(0))
   with_server(function(client)
     local params = {
       textDocument = { uri = vim.uri_from_bufnr(0) },
@@ -270,13 +277,55 @@ function ocaml.document_identifier(identifier)
   end)
 end
 
+function get_name_typ(l)
+  local acc = {}
+  for i = 1, #l do
+    acc[i] = l[i].name .. " " .. l[i].typ
+  end
+  return acc
+end
+
+function search_definition_declaration(query, f)
+  with_server(function(client)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local params = {
+      textDocument = { uri = vim.uri_from_bufnr(0) },
+      position = { line = row, character = col },
+      query = query,
+      limit = 10,
+      with_doc = true,
+      doc_format = "plaintext",
+    }
+    local result = client.request_sync("ocamllsp/typeSearch", params, 1000)
+    if not (result and result.result) then
+      vim.notify("Unable to find type " .. query .. ".", vim.log.levels.WARN)
+      return
+    end
+    local choices = result.result
+    ui.selecting_floating_window(get_name_typ(choices), function(id)
+      local n = choices[id].name
+      vim.defer_fn(function()
+        f(n)
+      end, 10)
+    end)
+  end)
+end
+
+function M.search_declaration(query)
+  search_definition_declaration(query, M.find_identifier_decl)
+end
+
+function M.search_definition(query)
+  search_definition_declaration(query, M.find_identifier_def)
+end
+
 --- Initialize the OCaml plugin
 ---@param config any
-function ocaml.setup(config)
+function M.setup(config)
   -- No config yet, itt can be ignored.
   local _ = config
 
-  vim.api.nvim_create_autocmd("FileType", {
+  api.nvim_create_autocmd("FileType", {
     pattern = { "ocaml", "ocaml.interface" },
     callback = function()
       vim.api.nvim_buf_create_user_command(0, "OCamlJumpNextHole", function()
@@ -325,4 +374,5 @@ function ocaml.setup(config)
     end,
   })
 end
-return ocaml
+
+return M
