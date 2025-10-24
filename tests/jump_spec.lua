@@ -11,9 +11,9 @@ end
 local stats = { 0, 0, 0 }
 function pp_stats()
   print("\nCommand execution counts :")
-  print("\tJumpPrevHole count : " .. stats[1])
-  print("\tJumpNextHole count : " .. stats[2])
-  print("\tConstruct count : " .. stats[3])
+  print("\tOCamlJumpPrevHole count : " .. stats[1])
+  print("\tOCamlJumpNextHole count : " .. stats[2])
+  print("\tOCamlConstruct count : " .. stats[3])
 end
 
 local pull = {
