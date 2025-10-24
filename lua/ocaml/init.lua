@@ -3,6 +3,7 @@ local M = {}
 local ui = require("ocaml.ui")
 
 local api = vim.api
+local ui = require("ocaml.ui")
 
 -- 5.1 Lua JUT Runtime compatibility
 table.unpack = table.unpack or unpack
@@ -378,6 +379,155 @@ function M.type_expression(expression)
     end
     print(parsed.value)
   end)
+end
+
+local namespace = vim.api.nvim_create_namespace("lsp_range")
+local enclosings = nil
+local index = 1
+local verbosity = 0
+local type = nil
+
+function M.grow_enclosing()
+  if enclosings == nil then
+    return
+  end
+  if index >= #enclosings then
+    index = 1
+  else
+    index = index + 1
+  end
+  local at = enclosings[index]
+  local res = M.type_enclosing(at, 0, verbosity)
+  type = res.type
+  M.display_type(enclosings[index])
+end
+
+function M.shrink_enclosing()
+  if enclosings == nil then
+    return
+  end
+  if index == 1 then
+    index = #enclosings
+  else
+    index = index - 1
+  end
+  local at = enclosings[index]
+  local res = M.type_enclosing(at, 0, verbosity)
+  type = res.type
+  M.display_type(enclosings[index])
+end
+
+function M.increase_verbosity()
+  if enclosings == nil then
+    return
+  end
+  local at = enclosings[index]
+  local pretype = type
+  local res = M.type_enclosing(at, 0, verbosity + 1)
+  if pretype == res.type then
+    return
+  end
+  verbosity = verbosity + 1
+  type = res.type
+  M.display_type(enclosings[index])
+end
+
+function M.decrease_verbosity()
+  if enclosings == nil or verbosity == 0 then
+    return
+  end
+  local at = enclosings[index]
+  verbosity = verbosity - 1
+  local res = M.type_enclosing(at, 0, verbosity)
+  type = res.type
+  M.display_type(enclosings[index])
+end
+
+function M.start_session()
+  if vim.b.in_special_mode then
+    return
+  end
+  vim.b.in_special_mode = true
+  vim.keymap.set("n", "g", function()
+    M.grow_enclosing()
+  end, { buffer = true, desc = "Grow enclosing" })
+  vim.keymap.set("n", "s", function()
+    M.shrink_enclosing()
+  end, { buffer = true, desc = "Shrink enclosing" })
+  vim.keymap.set("n", "i", function()
+    M.increase_verbosity()
+  end, { buffer = true, desc = "Increase verbosity" })
+  vim.keymap.set("n", "d", function()
+    M.decrease_verbosity()
+  end, { buffer = true, desc = "Decrease verbosity" })
+
+  local function stop_session()
+    enclosings = nil
+    index = 1
+    verbosity = 0
+    vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
+    if not vim.b.in_special_mode then
+      return
+    end
+    vim.b.in_special_mode = false
+    vim.keymap.del("n", "g", { buffer = true })
+    vim.keymap.del("n", "s", { buffer = true })
+    vim.keymap.del("n", "i", { buffer = true })
+    vim.keymap.del("n", "d", { buffer = true })
+    vim.api.nvim_clear_autocmds({ group = "EnclosingSession" })
+  end
+
+  local group = vim.api.nvim_create_augroup("EnclosingSession", { clear = true })
+  vim.api.nvim_create_autocmd({ "InsertEnter" }, {
+    group = group,
+    buffer = 0,
+    once = true,
+    callback = stop_session,
+  })
+end
+
+function M.type_enclosing(at, offset, v)
+  local res
+  with_server(function(client)
+    local params = {
+      uri = vim.uri_from_bufnr(0),
+      at = at,
+      index = offset,
+      verbosity = v,
+    }
+    local result = client.request_sync("ocamllsp/typeEnclosing", params, 1000)
+    if not (result and result.result) then
+      vim.notify("Unable to do the type enclosing.", vim.log.levels.WARN)
+      return
+    end
+    res = result.result
+  end)
+  return res
+end
+
+function M.display_type(range)
+  if type == nil then
+    vim.notify("No type to display.", vim.log.levels.WARN)
+    return
+  end
+  if string.find(type, "\n") then
+    print()
+    ui.display_floating_buffer(vim.split(type, "\n"))
+  else
+    print(type)
+  end
+  ui.highlight_range(0, namespace, range, "Search")
+end
+
+function M.enter_type_enclosing()
+  local row, col = table.unpack(api.nvim_win_get_cursor(0))
+  local at = { line = row - 1, character = col }
+  local result = M.type_enclosing(at, 0, verbosity)
+  type = result.type
+  enclosings = result.enclosings
+  index = 1
+  M.display_type(enclosings[index])
+  M.start_session()
 end
 
 --- Initialize the OCaml plugin
