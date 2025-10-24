@@ -43,6 +43,8 @@ All of the commands are detailed and illustrated in the following sections.
 | `FindIdentifierDefinition` | -- | :white_check_mark: | :x: | -- |
 | `FindIdentifierDeclaration` | -- | :white_check_mark: | :x: | -- |
 | `DocumentIdentifier` | -- | :white_check_mark: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
+| `SearchDeclaration` | -- | :white_check_mark: | :x: | Searches for a value declaration by its type or polarity. |
+| `SearchDefinition` | -- | :white_check_mark: | :x: | Searches for a value definition by its type or polarity. |
 | `ErrorNext` | -- | :x: | :x: | Jump to the next error. |
 | `ErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
 | `FindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
@@ -55,10 +57,8 @@ All of the commands are detailed and illustrated in the following sections.
 | `FindTypeDefinitionInNewWindow` | -- | :x: | :x: | -- |
 | `FindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
 | `Search` | -- | :x: | :x: | Searches for a value by its type or polarity to included in the current buffer. |
-| `SearchDefinition` | -- | :x: | :x: | Searches for a value definition by its type or polarity. |
 | `SearchDefinitionInNewWindow` | -- | :x: | :x: | -- |
 | `SearchDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `SearchDeclaration` | -- | :x: | :x: | Searches for a value declaration by its type or polarity. |
 | `SearchDeclarationInNewWindow` | -- | :x: | :x: | -- |
 | `SearchDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
 | `Document` | -- | :x: | :x: | Documents the expression below the cursor. |
@@ -125,3 +125,10 @@ It is possible to get the document of the identifier given in the argument.
 - `DocumentIdentifier`
 
 ![Documentation example](media/doc.gif)
+
+### Search declaration/definition
+
+- `SearchDeclaration` searches for a value by its type or polarity and jump to its declaration
+- `SearchDefinition` searches for a value by its type or polarity and jump to its definition
+
+![Search example](media/search.gif)
