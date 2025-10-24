@@ -311,12 +311,12 @@ function search_definition_declaration(query, f)
   end)
 end
 
-function ocaml.search_declaration(query)
-  search_definition_declaration(query, ocaml.find_identifier_decl)
+function M.search_declaration(query)
+  search_definition_declaration(query, M.find_identifier_decl)
 end
 
-function ocaml.search_definition(query)
-  search_definition_declaration(query, ocaml.find_identifier_def)
+function M.search_definition(query)
+  search_definition_declaration(query, M.find_identifier_def)
 end
 
 --- Initialize the OCaml plugin
@@ -373,11 +373,11 @@ function M.setup(config)
       end, { nargs = 1 })
 
       vim.api.nvim_create_user_command("SearchDeclaration", function(opts)
-        ocaml.search_declaration(opts.args)
+        M.search_declaration(opts.args)
       end, { nargs = 1 })
 
       vim.api.nvim_create_user_command("SearchDefinition", function(opts)
-        ocaml.search_definition(opts.args)
+        M.search_definition(opts.args)
       end, { nargs = 1 })
     end,
   })
