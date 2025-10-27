@@ -281,7 +281,11 @@ function M.document_identifier(identifier)
       return
     end
     local doc = result.result.doc.value
-    print(doc)
+    if string.find(doc, "\n") then
+      ui.display_floating_buffer(vim.split(doc, "\n"))
+    else
+      print(doc)
+    end
   end)
 end
 
