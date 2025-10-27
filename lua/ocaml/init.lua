@@ -379,6 +379,14 @@ function M.setup(config)
       vim.api.nvim_create_user_command("OCamlDocumentIdentifier", function(opts)
         M.document_identifier(opts.args)
       end, { nargs = 1 })
+
+      vim.api.nvim_create_user_command("OCamlSearchDeclaration", function(opts)
+        M.search_declaration(opts.args)
+      end, { nargs = 1 })
+
+      vim.api.nvim_create_user_command("OCamlSearchDefinition", function(opts)
+        M.search_definition(opts.args)
+      end, { nargs = 1 })
     end,
   })
 end
