@@ -24,26 +24,31 @@ local function with_server(callback)
   vim.notify("No OCaml LSP server available", vim.log.levels.ERROR)
 end
 
-function M.jump_to_hole(dir, range)
+function M.jump_to_hole(dir, range, bufnr)
+  local buf = bufnr or 0
   with_server(function(client)
     local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local params = {
-      uri = vim.uri_from_bufnr(0),
+      uri = vim.uri_from_bufnr(buf),
       position = { line = row - 1, character = col },
       direction = dir,
       range = range,
     }
     local result = client.request_sync("ocamllsp/jumpToTypedHole", params, 1000)
-    if not (result and result.result) then
+    if not result then
       vim.notify("No typed holes found.", vim.log.levels.WARN)
       return
     end
-    local hole_range = result.result
-    api.nvim_win_set_cursor(0, { hole_range.start.line + 1, hole_range.start.character })
+    local hole = result.result
+    if hole == nil then
+      return
+    end
+    local win = bufnr and vim.fn.bufwinid(buf) or 0
+    api.nvim_win_set_cursor(win, { hole.start.line + 1, hole.start.character })
   end)
 end
 
-function M.construct(input)
+function M.construct()
   with_server(function(client)
     local row, col = table.unpack(api.nvim_win_get_cursor(0))
     local params = {
@@ -58,29 +63,20 @@ function M.construct(input)
     end
 
     local choices = result.result.result
-
+    local buf = api.nvim_get_current_buf()
     local function apply_choice(choice)
-      api.nvim_buf_set_text(0, row - 1, col, row - 1, col + 1, { choice })
+      api.nvim_buf_set_text(buf, row - 1, col, row - 1, col + 1, { choice })
       local range = {
         start = { line = row - 1, character = col },
         ["end"] = { line = row - 1, character = col + #choice },
       }
-      require("ocaml").jump_to_hole("next", range)
+      M.jump_to_hole("next", range, buf)
       vim.cmd.redraw()
     end
 
-    if input then
-      local choice = choices[input]
-      if choice then
-        apply_choice(choice)
-      end
-    else
-      vim.ui.select(choices, { prompt = "Choose a construct:" }, function(choice)
-        if choice then
-          apply_choice(choice)
-        end
-      end)
-    end
+    ui.selecting_floating_window(choices, function(id)
+      apply_choice(choices[id])
+    end)
   end)
 end
 
@@ -281,7 +277,11 @@ function M.document_identifier(identifier)
       return
     end
     local doc = result.result.doc.value
-    print(doc)
+    if string.find(doc, "\n") then
+      ui.display_floating_buffer(vim.split(doc, "\n"))
+    else
+      print(doc)
+    end
   end)
 end
 
