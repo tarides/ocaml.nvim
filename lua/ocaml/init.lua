@@ -89,18 +89,32 @@ function M.jump(target)
       return
     end
     local jumps = result.result.jumps
+    local win = vim.fn.bufwinid(api.nvim_get_current_buf())
+
     if #jumps == 0 then
       vim.notify("Nothing to jump to.", vim.log.levels.INFO)
       return
     end
-    for _, j in ipairs(jumps) do
-      if j.target == target then
-        api.nvim_win_set_cursor(0, { j.position.line + 1, j.position.character })
-        return
-      end
+
+    local function jump_to(t)
+      api.nvim_win_set_cursor(win, { t.position.line + 1, t.position.character })
     end
-    vim.cmd.redraw()
-    vim.notify("Unable to jump to " .. target, vim.log.levels.INFO)
+
+    if target == "" then
+      local targets = vim.tbl_map(function(j) return j.target end, jumps)
+      ui.selecting_floating_window(targets, function(id)
+        jump_to(jumps[id])
+      end)
+    else
+      for _, j in ipairs(jumps) do
+        if j.target == target then
+          jump_to(j)
+          return
+        end
+      end
+      vim.cmd.redraw()
+      vim.notify("Unable to jump to " .. target, vim.log.levels.INFO)
+    end
   end)
 end
 
@@ -350,7 +364,7 @@ function M.setup(config)
 
       vim.api.nvim_create_user_command("OCamlJump", function(opts)
         M.jump(opts.args)
-      end, { nargs = 1 })
+      end, { nargs = "?" })
 
       vim.api.nvim_create_user_command("OCamlPhrasePrev", function()
         M.phrase("prev")
