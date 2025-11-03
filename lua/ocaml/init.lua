@@ -489,6 +489,9 @@ function M.start_session()
     once = true,
     callback = stop_session,
   })
+  vim.keymap.set("n", "<Esc>", function()
+    stop_session()
+  end, { buffer = true, desc = "Exit enclosing session" })
 end
 
 function M.type_enclosing(at, offset, v)
