@@ -18,6 +18,11 @@ local config = {
     phrase_next = "<leader>pn",
     infer = "<leader>i",
     switch_ml_mli = "<leader>s",
+    type_enclosing = "<leader>t",
+    type_enclosing_grow = "<Up>",
+    type_enclosing_shrink = "<Down>",
+    type_enclosing_increase = "<Right>",
+    type_enclosing_decrease = "<Left>",
   }
 }
 
@@ -448,16 +453,16 @@ function M.start_session()
     return
   end
   vim.b.in_special_mode = true
-  vim.keymap.set("n", "g", function()
+  vim.keymap.set("n", config.keymaps.type_enclosing_grow, function()
     M.grow_enclosing()
   end, { buffer = true, desc = "Grow enclosing" })
-  vim.keymap.set("n", "s", function()
+  vim.keymap.set("n", config.keymaps.type_enclosing_shrink, function()
     M.shrink_enclosing()
   end, { buffer = true, desc = "Shrink enclosing" })
-  vim.keymap.set("n", "i", function()
+  vim.keymap.set("n", config.keymaps.type_enclosing_increase, function()
     M.increase_verbosity()
   end, { buffer = true, desc = "Increase verbosity" })
-  vim.keymap.set("n", "d", function()
+  vim.keymap.set("n", config.keymaps.type_enclosing_decrease, function()
     M.decrease_verbosity()
   end, { buffer = true, desc = "Decrease verbosity" })
 
@@ -470,10 +475,10 @@ function M.start_session()
       return
     end
     vim.b.in_special_mode = false
-    vim.keymap.del("n", "g", { buffer = true })
-    vim.keymap.del("n", "s", { buffer = true })
-    vim.keymap.del("n", "i", { buffer = true })
-    vim.keymap.del("n", "d", { buffer = true })
+    vim.keymap.del("n", config.keymaps.type_enclosing_grow, { buffer = true })
+    vim.keymap.del("n", config.keymaps.type_enclosing_shrink, { buffer = true })
+    vim.keymap.del("n", config.keymaps.type_enclosing_increase, { buffer = true })
+    vim.keymap.del("n", config.keymaps.type_enclosing_decrease, { buffer = true })
     vim.api.nvim_clear_autocmds({ group = "EnclosingSession" })
   end
 
