@@ -1,19 +1,58 @@
 # ocaml.nvim
 
-`ocaml.nvim` provides direct access to advanced `ocamllsp` features without
-requiring complex editor-side logic.
-`ocaml.nvim` aims to offer a fast, simple, and modular workflow in Neovim.
-This plugin gives access to all the advanced Merlin commands not supported by
-generic LSP clients, such as Construct, alternate between `.mli` and `.ml`
-files, etc.
+## What is ocaml.nvim?
 
-## Installation using `lazy.nvim`
+`ocaml.nvim` is a Neovim plugin that enhances the OCaml development experience.
+It is an extension of the Language Server Protocol (LSP) for OCaml, because it provides features beyond the standard LSP scope.
+It aims to provide the features that OCaml Merlin offers, which are missing from LSP.
+This plugin requires the OCaml LSP server called `ocamllsp`, but you should also have an LSP support to have the standard features, either natively or using `lsp-config`.
+`ocaml.nvim` also simplifies the use of some code actions with dedicated commands.
 
-Add the plugin to your `lazy.nvim` setup:
+## Table of contents
+
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Customization](#customization)
+- [Contributing](#contributing)
+
+## Getting Started
+
+This section guides you through setting up the essential components required to enable OCaml-specific editing features.
+You will install the OCaml language server (`ocamllsp`), configure it natively or through Neovim's LSP client, and finally add the `ocaml.nvim` plugin to obtain the advanced features.
+
+#### 1- Install [`ocamllsp`](https://github.com/ocaml/ocaml-lsp), the LSP server for OCaml
+
+##### Using [Opam](https://github.com/ocaml/opam)
+
+Opam allows you to install packages either locally (in the current switch) or globally (in all the existing switches).
+
+```bash
+$ opam install ocaml-lsp-server
+```
+
+##### From source
+
+```bash
+$ git clone --recurse-submodules http://github.com/ocaml/ocaml-lsp.git
+$ cd ocaml-lsp
+$ make install
+```
+
+Please read the dedicated [README.md](https://github.com/ocaml/ocaml-lsp) for more details.
+
+#### 2- Add `ocamllsp` server in the LSP configuration
+
+If you are using the native LSP please refer th the [official documentation](https://neovim.io/doc/user/lsp.html) for the installation.
+
+If you are using a plugin giving you a set of LSP configuration like [`nvim-lspconfig`](https://github.com/neovim/nvim-lspconfig), please refer to it respective documentation.
+
+#### 3- Add `ocaml.nvim` to your configuration
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 require("lazy").setup({
-  { "tarides/ocaml.nvim",
+  {"tarides/ocaml.nvim",
     config = function()
       require("ocaml").setup()
     end
@@ -21,114 +60,111 @@ require("lazy").setup({
 })
 ```
 
-## Features
-Here is the list of commands offered by `ocaml.nvim` and their key binding.
-All of the commands are detailed and illustrated in the following sections.
+## Usage
 
-> [!IMPORTANT]
-> This section only covers features specific to `ocaml.nvim`.
-> However, the builtin LSP of Neovim already provides standards commands such as
-> go-to-definition and hover documentation.
+This section lists all the functions available in Neovim to streamline your OCaml development workflow.
+It covers both the functions provided by this plugin and those accessible via the OCaml LSP.
+First, an overview table summarizes all available commands. Detailed explanations and examples are provided below, including links to the corresponding sections for more context.
 
-| Command | Default Binding | Available | Tests | Description |
-| -- | -- | -- | -- | -- |
-| `OCamlJumpPrevHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the previous hole. |
-| `OCamlJumpNextHole` | -- | :white_check_mark: | :white_check_mark: | Jump to the next hole. |
-| `OCamlConstruct` | -- | :white_check_mark: | :white_check_mark: | Open up a list of valid substitutions to fill the hole. |
-| `OCamlJump` | -- | :white_check_mark: | :x: | Jumps to the referenced expression. |
-| `OCamlPhraseNext` | -- | :white_check_mark: | :x: | Jump to the beginnning of the previous phrase. |
-| `OCamlPhrasePrev` | -- | :white_check_mark: | :x: | Jump to the beginning of the next phrase. |
-| `OCamlInferIntf` | -- | :white_check_mark: | :x: | Infer the interface for the current implementation file. |
-| `OCamlAlternateFile` | -- | :white_check_mark: | :x: | Switch from the implementation file to the interface file and vice versa. |
-| `OCamlFindIdentifierDefinition` | -- | :white_check_mark: | :x: | -- |
-| `OCamlFindIdentifierDeclaration` | -- | :white_check_mark: | :x: | -- |
-| `OCamlDocumentIdentifier` | -- | :white_check_mark: | :x: | Enables you to enter an identifier (present in the environment) and return its documentation. |
-| `OCamlErrorNext` | -- | :x: | :x: | Jump to the next error. |
-| `OCamlErrorPrev` | -- | :x: | :x: | Jump to the previous error. |
-| `OCamlFindDefinition` | -- | :x: | :x: | Jump to definition (the implementation). |
-| `OCamlFindDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `OCamlFindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `OCamlFindDeclaration` | -- | :x: | :x: | Jump to declaration (the signature). |
-| `OCamlFindDeclarationInNewWindow` | -- | :x: | :x: | -- |
-| `OCamlFindDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `OCamlFindTypeDefinition` | -- | :x: | :x: | Jump to the type definition of the expression. |
-| `OCamlFindTypeDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `OCamlFindTypeDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `OCamlSearch` | -- | :x: | :x: | Searches for a value by its type or polarity to included in the current buffer. |
-| `OCamlSearchDefinition` | -- | :x: | :x: | Searches for a value definition by its type or polarity. |
-| `OCamlSearchDefinitionInNewWindow` | -- | :x: | :x: | -- |
-| `OCamlSearchDefinitionInCurrentWindow` | -- | :x: | :x: | -- |
-| `OCamlSearchDeclaration` | -- | :x: | :x: | Searches for a value declaration by its type or polarity. |
-| `OCamlSearchDeclarationInNewWindow` | -- | :x: | :x: | -- |
-| `OCamlSearchDeclarationInCurrentWindow` | -- | :x: | :x: | -- |
-| `OCamlDocument` | -- | :x: | :x: | Documents the expression below the cursor. |
-| `OCamlDestruct` | -- | :x: | :x: | Allows you to generate and manipulate pattern matching expressions. |
-| `OCamlTypeExpression` | -- | :x: | :x: | -- |
-| `OCamlTypeEnclosing` | -- | :x: | :x: | Display the type of the selection and start a "type enclosing" session. |
-| `OCamlOccurences` | -- | :x: | :x: | Returns all occurrences of the identifier under the cursor. |
-| `OCamlRename` | -- | :x: | :x: | Rename the symbol under the cursor. |
+### Commands Overview
 
-### Construct expression
+| Command                                 | Keymap       | Action                                                     | Detail                                                   |
+| --------------------------------------- | ------------ | ---------------------------------------------------------- | -------------------------------------------------------- |
+| `:OCamlJumpPrevHole`                    | `<leader>p`  | Jump to the previous hole.                                 | [Holes handling](#holes-handling)                        |
+| `:OCamlJumpNextHole`                    | `<leader>n`  | Jump to the next hole.                                     | [Holes handling](#holes-handling)                        |
+| `:OCamlConstruct`                       | `<leader>c`  | Open a list of valid substitutions to fill the hole.       | [Holes handling](#holes-handling)                        |
+| `:OCamlJump` expr?                      | `<leader>j`  | Open a list of jumpable expression or jump to `expr`.      | [Code navigation](#code-navigation)                      |
+| `:OCamlPhraseNext`                      | `<leader>pn` | Jump to the beginning of the next phrase.                  | [Code navigation](#code-navigation)                      |
+| `:OCamlPhrasePrev`                      | `<leader>pp` | Jump to the beginning of the previous phrase.              | [Code navigation](#code-navigation)                      |
+| `:OCamlInferIntf`                       | `<leader>i`  | Infer the interface of the associated implementation file. | [Interface file management](#interface-file-management)  |
+| `:OCamlSwitchIntfImpl`                  | `<leader>s`  | Switch between `.ml` file and `.mli` file.                 | [Interface file management](#interface-file-management)  |
+| `:OCamlFindIdentifierDefinition` idt    |              | Open to the identifier `idt` definition.                   | [Identifier information](#identifier-information)        |
+| `:OCamlFindIdentifierDeclaration` idt   |              | Open to the identifier `idt` declaration.                  | [Identifier information](#identifier-information)        |
+| `:OCamlDocumentIdentifier` idt          |              | Display the identifier `idt` documentation.                | [Identifier information](#identifier-information)        |
+| `:OCamlSearchDefinition` ty             |              | Open to the type `ty` definition.                          | [Type information](#type-information)                    |
+| `:OCamlSearchDeclaration` ty            |              | Open to the type `ty` declaration.                         | [Type information](#type-information)                    |
 
-Enables you to navigate between typed-holes (`_`) in a document and
-interactively substitute them:
+### Details
 
-- `OCamlJumpPrevHole`: jump to the next hole
-- `OCamlJumpNextHole`: jump to the previous hole
-- `OCamlConstruct`: open up a list of valid substitutions to fill the hole
+#### Holes handling
 
-![Construct example](media/construct.gif)
+Typed holes (`_`) are incomplete parts of your OCaml code where the compiler expects an expression.
+- `:OCamlJumpPrevHole` jumps to the previous hole in the buffer.
+- `:OCamlJumpNextHole` jumps to the next hole in the buffer.
+- `:OCamlConstruct` opens a list of valid expressions that can replace the hole under the cursor, select the one you want and it will substitute the hole. Type inference is required to propose correct substitutions.
 
-### Source browsing
+![Holes handling example](media/holes_handling.gif)
 
-Allows you to navigate semantically in a buffer, passing from an expression to
-the parent `let`, the parent `module`, the parent `fun` and the parent `match` expression.
-It is also possible to navigate between pattern matching cases:
+#### Code navigation
 
-- `OCamlJump`: jumps to the referenced expression
+These functions help you navigate semantically in the buffer.
+- `:OCamlJump expr` jumps to the parent expression referenced by `expr`. For example, this could be `:Jump let` to jump to the parent let of the current cursor location.
 
 ![Jump example](media/jump.gif)
 
-- `OCamlPhrasePrev`: jump to the beginning of the previous phrase
-- `OCamlPhraseNext`: jump to the beginning of the next phrase
+A phrase in OCaml is a complete syntactic unit, such as a definition, expression, or declaration, that can be evaluated or compiled independently.
+- `:OCamlPhrasePrev` jumps to the beginning of the previous phrase in the code.
+- `:OCamlPhraseNext` jumps to the beginning of the next phrase.
 
 ![Phrase example](media/phrase.gif)
 
-### Infer interface
+#### Interface file management
 
-Used to infer the type of an interface file. If the buffer is not empty,
-a prompt will ask for confirmation to overwrite the buffer contents.
+These functions help alternate between the `.ml` and `.mli` files and infer the interface.
+- `:OCamlInferIntf` infers the type of an interface file from its implementation.
+- `:OCamlSwitchIntfImpl` switches from the implementation file to the interface file and vice versa.
 
-![Infer example](media/infer.gif)
+![Infer and switch example](media/intfmanagement.gif)
 
-### Find alternate file
+#### Identifier information
 
-Quickly switch from the implementation file to the interface file and
-vice versa. If the interface file does not exist, a prompt can be used to
-generate it.
+These functions provide information about a specific identifier specified by `idt`.
+`idt` could be, for example, `List.hd` or `Sys.time`.
+- `:OCamlFindIdentifierDefinition idt` opens the identifier `idt` definition in a split window.
+- `:OCamlFindIdentifierDeclaration idt` opens the identifier `idt` declaration in a split window.
+- `:OCamlDocumentIdentifier idt` shows the identifier `idt` documentation.
 
-![Alternate file example](media/switch.gif)
+![Identifier information example](media/identifiers.gif)
 
-### Find identifiers definition/declaration
+#### Type information
 
-It is possible to directly enter the name of an identifier (definition or declaration) using the following commands.
+These functions enable you to search for values based on their type or polarity.
+A polarity query prefixes the function arguments with `-` and the return with `+`.
+For example, to search for a function of type `int -> string`, use `-int +string`.
+Searching by polarity does not support type parameters.
 
-- `OCamlFindIdentifierDefinition`
-- `OCamlFindIdentifierDeclaration`
+A search by type (modulo isomorphisms) accepts a type expression close to what you would normally write in OCaml.
+For instance, to find `int_of_string_opt`, you can search for `string -> int option`.
+If multiple functions match the given type or polarity, a selection list appears.
+After you choose one, the corresponding definition or declaration opens in a split window.
 
-![Finds example](media/find.gif)
-
-### Get documentation
-
-It is possible to get the document of the identifier given in the argument.
-
-- `OCamlDocumentIdentifier`
-
-![Documentation example](media/doc.gif)
-
-### Search declaration/definition
-
-- `SearchDeclaration` searches for a value by its type or polarity and jump to its declaration
-- `SearchDefinition` searches for a value by its type or polarity and jump to its definition
+- `:OCamlSearchDefinition ty` lists all functions with type `ty` and opens the definition.
+- `:OCamlSearchDeclaration ty` lists all functions with type `ty` and opens the declaration.
 
 ![Search example](media/search.gif)
+
+## Customization
+
+You can customize all the keymaps available that doesn't have mandatory arguments.
+To do that, you need to give the `setup` function the `keymaps` array.
+Every keymap you provide should be a string and will overwrite the default one specified in the [Usage](#usage) table.
+Below is the list of the available keymaps you can edit.
+
+```lua
+require("ocaml").setup({
+  keymaps = {
+    jump_next_hole = "<leader>n",
+    jump_prev_hole = "<leader>p",
+    construct = "<leader>c",
+    jump = "<leader>j",
+    phrase_prev = "<leader>pp",
+    phrase_next = "<leader>pn",
+    infer = "<leader>i",
+    switch_ml_mli = "<leader>s",
+  },
+})
+```
+
+## Contributing
+
+All contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md)
