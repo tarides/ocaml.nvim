@@ -16,7 +16,7 @@ local config = {
     phrase_prev = "<leader>pp",
     phrase_next = "<leader>pn",
     infer = "<leader>i",
-    alternate_file = "<leader>a",
+    switch_ml_mli = "<leader>s",
   }
 }
 
@@ -397,7 +397,7 @@ function M.setup(user_config)
         M.phrase("next")
       end, {})
       vim.keymap.set("n", config.keymaps.phrase_next, "<CMD>OCamlPhraseNext<CR>",
-        { desc = "OCaml: Jump to the beginning of the next phrase." })
+        { desc = "OCaml: Jump to the beginning of the next phrase" })
 
       vim.api.nvim_create_user_command("OCamlInferIntf", function()
         M.infer_intf()
@@ -405,11 +405,11 @@ function M.setup(user_config)
       vim.keymap.set("n", config.keymaps.infer, "<CMD>OCaml<CR>",
         { desc = "OCaml: Infer the interface of the associated implementation file" })
 
-      vim.api.nvim_create_user_command("OCamlAlternateFile", function()
+      vim.api.nvim_create_user_command("OCamlSwitchIntfImpl", function()
         M.switch_file()
       end, {})
-      vim.keymap.set("n", config.keymaps.alternate_file, "<CMD>OCamlAlternateFile<CR>",
-        { desc = "OCaml: Alternate between `.ml` and `.mli`." })
+      vim.keymap.set("n", config.keymaps.switch_ml_mli, "<CMD>OCamlSwitchIntfImpl<CR>",
+        { desc = "OCaml: Switch between `.ml` and `.mli` file" })
 
       vim.api.nvim_create_user_command("OCamlFindIdentifierDefinition", function(opts)
         M.find_identifier_def(opts.args)
