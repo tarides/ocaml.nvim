@@ -1,7 +1,5 @@
 local M = {}
 
-local ui = require("ocaml.ui")
-
 local api = vim.api
 local ui = require("ocaml.ui")
 
