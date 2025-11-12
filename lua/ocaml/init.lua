@@ -114,7 +114,9 @@ function M.jump(target)
     end
 
     if target == "" then
-      local targets = vim.tbl_map(function(j) return j.target end, jumps)
+      local targets = vim.tbl_map(function(j)
+        return j.target
+      end, jumps)
       ui.selecting_floating_window(targets, function(id)
         jump_to(jumps[id])
       end)
@@ -229,20 +231,15 @@ end
 
 local function find_identifier(client, identifier, method)
   local row, col = table.unpack(api.nvim_win_get_cursor(0))
-  local params = {
-    uri = vim.uri_from_bufnr(0),
-    command = "locate",
-    args = {
-      "-position",
-      row + 1 .. ":" .. col,
-      "-prefix",
-      identifier,
-      "-look-for",
-      method,
-    },
-    resultAsSexp = false,
+  local args = {
+    "-position",
+    row + 1 .. ":" .. col,
+    "-prefix",
+    identifier,
+    "-look-for",
+    method,
   }
-  return client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
+  return merlinCallCompatible(client, "locate", args)
 end
 
 local function parse(data)
@@ -366,50 +363,82 @@ function M.setup(user_config)
       vim.api.nvim_create_user_command("OCamlJumpNextHole", function()
         M.jump_to_hole("next")
       end, {})
-      vim.keymap.set("n", config.keymaps.jump_next_hole, "<CMD>OCamlJumpNextHole<CR>",
-        { desc = "OCaml: Jump to the next hole" })
+      vim.keymap.set(
+        "n",
+        config.keymaps.jump_next_hole,
+        "<CMD>OCamlJumpNextHole<CR>",
+        { desc = "OCaml: Jump to the next hole" }
+      )
 
       vim.api.nvim_create_user_command("OCamlJumpPrevHole", function()
         M.jump_to_hole("prev")
       end, {})
-      vim.keymap.set("n", config.keymaps.jump_prev_hole, "<CMD>OCamlJumpPrevHole<CR>",
-        { desc = "OCaml: Jump to the previous hole" })
+      vim.keymap.set(
+        "n",
+        config.keymaps.jump_prev_hole,
+        "<CMD>OCamlJumpPrevHole<CR>",
+        { desc = "OCaml: Jump to the previous hole" }
+      )
 
       vim.api.nvim_create_user_command("OCamlConstruct", function()
         M.construct()
       end, {})
-      vim.keymap.set("n", config.keymaps.construct, "<CMD>OCamlConstruct<CR>",
-        { desc = "OCaml: Open a list of valid substitutions to fill the hole" })
+      vim.keymap.set(
+        "n",
+        config.keymaps.construct,
+        "<CMD>OCamlConstruct<CR>",
+        { desc = "OCaml: Open a list of valid substitutions to fill the hole" }
+      )
 
       vim.api.nvim_create_user_command("OCamlJump", function(opts)
         M.jump(opts.args)
       end, { nargs = "?" })
-      vim.keymap.set("n", config.keymaps.jump, "<CMD>OCamlJump<CR>",
-        { desc = "OCaml: Open a list of valid jump from this location" })
+      vim.keymap.set(
+        "n",
+        config.keymaps.jump,
+        "<CMD>OCamlJump<CR>",
+        { desc = "OCaml: Open a list of valid jump from this location" }
+      )
 
       vim.api.nvim_create_user_command("OCamlPhrasePrev", function()
         M.phrase("prev")
       end, {})
-      vim.keymap.set("n", config.keymaps.phrase_prev, "<CMD>OCamlPhrasePrev<CR>",
-        { desc = "OCaml: Jump to the beginning of the previous phrase" })
+      vim.keymap.set(
+        "n",
+        config.keymaps.phrase_prev,
+        "<CMD>OCamlPhrasePrev<CR>",
+        { desc = "OCaml: Jump to the beginning of the previous phrase" }
+      )
 
       vim.api.nvim_create_user_command("OCamlPhraseNext", function()
         M.phrase("next")
       end, {})
-      vim.keymap.set("n", config.keymaps.phrase_next, "<CMD>OCamlPhraseNext<CR>",
-        { desc = "OCaml: Jump to the beginning of the next phrase" })
+      vim.keymap.set(
+        "n",
+        config.keymaps.phrase_next,
+        "<CMD>OCamlPhraseNext<CR>",
+        { desc = "OCaml: Jump to the beginning of the next phrase" }
+      )
 
       vim.api.nvim_create_user_command("OCamlInferIntf", function()
         M.infer_intf()
       end, {})
-      vim.keymap.set("n", config.keymaps.infer, "<CMD>OCaml<CR>",
-        { desc = "OCaml: Infer the interface of the associated implementation file" })
+      vim.keymap.set(
+        "n",
+        config.keymaps.infer,
+        "<CMD>OCaml<CR>",
+        { desc = "OCaml: Infer the interface of the associated implementation file" }
+      )
 
       vim.api.nvim_create_user_command("OCamlSwitchIntfImpl", function()
         M.switch_file()
       end, {})
-      vim.keymap.set("n", config.keymaps.switch_ml_mli, "<CMD>OCamlSwitchIntfImpl<CR>",
-        { desc = "OCaml: Switch between `.ml` and `.mli` file" })
+      vim.keymap.set(
+        "n",
+        config.keymaps.switch_ml_mli,
+        "<CMD>OCamlSwitchIntfImpl<CR>",
+        { desc = "OCaml: Switch between `.ml` and `.mli` file" }
+      )
 
       vim.api.nvim_create_user_command("OCamlFindIdentifierDefinition", function(opts)
         M.find_identifier_def(opts.args)
