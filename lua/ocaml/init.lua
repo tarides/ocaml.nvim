@@ -1,5 +1,8 @@
 local M = {}
 
+-- Small trick to make vim warning popping only here.
+local vim = vim
+
 local api = vim.api
 local ui = require("ocaml.ui")
 
