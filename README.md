@@ -143,6 +143,21 @@ After you choose one, the corresponding definition or declaration opens in a spl
 
 ![Search example](media/search.gif)
 
+#### Type enclosing
+
+These functions help you with the type of expression, either under the cursor or given as an argument.
+You can adjust the size of the expression and the verbosity level of the type with the arrow keys.
+
+- `:OCamlTypeEnclosing` starts a type enclosing session.
+    - `<Up>` and `<Down>` grow and shrink the expression.
+    - `<Right>` and `<Left>` increase and decrease the verbosity of the type observed.
+
+![TypeEnclosing example](media/typeenclosing.gif)
+
+- `:OCamlTypeExpression expr` prints the type of the expression `expr`. For example, it can be `[1;2;3]` which will return `int list`.
+
+![TypeExpression example](media/typeexression.gif)
+
 ## Customization
 
 You can customize all the keymaps available that doesn't have mandatory arguments.
@@ -161,6 +176,11 @@ require("ocaml").setup({
     phrase_next = "<leader>pn",
     infer = "<leader>i",
     switch_ml_mli = "<leader>s",
+    type_enclosing = "<leader>t",
+    type_enclosing_grow = "<Up>",
+    type_enclosing_shrink = "<Down>",
+    type_enclosing_increase = "<Right>",
+    type_enclosing_decrease = "<Left>",
   },
 })
 ```
