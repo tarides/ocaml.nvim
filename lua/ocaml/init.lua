@@ -140,7 +140,7 @@ function M.jump(target)
   end)
 end
 
-function merlinCallCompatible(client, command, args)
+local function merlinCallCompatible(client, command, args)
   local params = {
     uri = vim.uri_from_bufnr(0),
     command = command,
