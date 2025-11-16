@@ -432,23 +432,37 @@ function M.decrease_verbosity()
   M.display_type(enclosings[index])
 end
 
-function M.start_session()
+--- Starts a type enclosing session and register keys
+---@param user_opts ocaml.config.OCamlConfig
+local function start_session(user_opts)
   if vim.b.in_special_mode then
     return
   end
   vim.b.in_special_mode = true
-  vim.keymap.set("n", config.keymaps.type_enclosing_grow, function()
-    M.grow_enclosing()
-  end, { buffer = true, desc = "Grow enclosing" })
-  vim.keymap.set("n", config.keymaps.type_enclosing_shrink, function()
-    M.shrink_enclosing()
-  end, { buffer = true, desc = "Shrink enclosing" })
-  vim.keymap.set("n", config.keymaps.type_enclosing_increase, function()
-    M.increase_verbosity()
-  end, { buffer = true, desc = "Increase verbosity" })
-  vim.keymap.set("n", config.keymaps.type_enclosing_decrease, function()
-    M.decrease_verbosity()
-  end, { buffer = true, desc = "Decrease verbosity" })
+
+  if user_opts.keymaps.type_enclosing_grow ~= nil then
+    vim.keymap.set("n", user_opts.keymaps.type_enclosing_grow, function()
+      M.grow_enclosing()
+    end, { buffer = true, desc = "Grow enclosing" })
+  end
+
+  if user_opts.keymaps.type_enclosing_shrink ~= nil then
+    vim.keymap.set("n", user_opts.keymaps.type_enclosing_shrink, function()
+      M.shrink_enclosing()
+    end, { buffer = true, desc = "Shrink enclosing" })
+  end
+
+  if user_opts.keymaps.type_enclosing_increase ~= nil then
+    vim.keymap.set("n", user_opts.keymaps.type_enclosing_increase, function()
+      M.increase_verbosity()
+    end, { buffer = true, desc = "Increase verbosity" })
+  end
+
+  if user_opts.keymaps.type_enclosing_decrease ~= nil then
+    vim.keymap.set("n", user_opts.keymaps.type_enclosing_decrease, function()
+      M.decrease_verbosity()
+    end, { buffer = true, desc = "Decrease verbosity" })
+  end
 
   local function stop_session()
     enclosings = nil
@@ -459,10 +473,23 @@ function M.start_session()
       return
     end
     vim.b.in_special_mode = false
-    vim.keymap.del("n", config.keymaps.type_enclosing_grow, { buffer = true })
-    vim.keymap.del("n", config.keymaps.type_enclosing_shrink, { buffer = true })
-    vim.keymap.del("n", config.keymaps.type_enclosing_increase, { buffer = true })
-    vim.keymap.del("n", config.keymaps.type_enclosing_decrease, { buffer = true })
+
+    if user_opts.keymaps.type_enclosing_grow ~= nil then
+      vim.keymap.del("n", user_opts.keymaps.type_enclosing_grow, { buffer = true })
+    end
+
+    if user_opts.keymaps.type_enclosing_shrink ~= nil then
+      vim.keymap.del("n", user_opts.keymaps.type_enclosing_shrink, { buffer = true })
+    end
+
+    if user_opts.keymaps.type_enclosing_increase ~= nil then
+      vim.keymap.del("n", user_opts.keymaps.type_enclosing_increase, { buffer = true })
+    end
+
+    if user_opts.keymaps.type_enclosing_decrease ~= nil then
+      vim.keymap.del("n", user_opts.keymaps.type_enclosing_decrease, { buffer = true })
+    end
+
     vim.api.nvim_clear_autocmds({ group = "EnclosingSession" })
   end
 
@@ -511,7 +538,9 @@ function M.display_type(range)
   ui.highlight_range(0, namespace, range, "Search")
 end
 
-function M.enter_type_enclosing()
+--- Start an interactive type enclosing session
+---@param user_opts ocaml.config.OCamlConfig
+function M.enter_type_enclosing(user_opts)
   local row, col = table.unpack(api.nvim_win_get_cursor(0))
   local at = { line = row - 1, character = col }
   local result = M.type_enclosing(at, 0, verbosity)
@@ -519,7 +548,7 @@ function M.enter_type_enclosing()
   enclosings = result.enclosings
   index = 1
   M.display_type(enclosings[index])
-  M.start_session()
+  start_session(user_opts)
 end
 
 --- Initialize the OCaml plugin
@@ -659,7 +688,7 @@ function M.setup(user_config)
       end, { nargs = 1 })
 
       api.nvim_create_user_command("OCamlTypeEnclosing", function()
-        M.enter_type_enclosing()
+        M.enter_type_enclosing(user_opts)
       end, {})
 
       if user_opts.keymaps.type_enclosing ~= nil then
