@@ -69,6 +69,8 @@ Below is the list of the available keymaps you can edit.
 
 ```lua
 require("ocaml").setup({
+  -- If you replace this section with {} it will not setup any
+  -- keymaps.
   keymaps = {
     jump_next_hole = "<leader>n",
     jump_prev_hole = "<leader>p",
