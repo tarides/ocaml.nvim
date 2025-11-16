@@ -65,10 +65,12 @@ require("lazy").setup({
 You can customize all the keymaps available that doesn't have mandatory arguments.
 To do that, you need to give the `setup` function the `keymaps` array.
 Every keymap you provide should be a string and will overwrite the default one specified in the [Usage](#usage) table.
-Below is the list of the available keymaps you can edit.
+Below is the list of the available keymaps you can edit:
 
 ```lua
 require("ocaml").setup({
+  -- If you replace this section with {} it will not setup any
+  -- keymaps.
   keymaps = {
     jump_next_hole = "<leader>n",
     jump_prev_hole = "<leader>p",
@@ -86,6 +88,8 @@ require("ocaml").setup({
   },
 })
 ```
+
+As soon as you start defining your **own** keymaps, the default ones **will not** be set anymore.
 
 ## Usage
 
