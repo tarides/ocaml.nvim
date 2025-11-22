@@ -41,8 +41,16 @@ local default = {
 
 --- Extends the configuration with user config
 ---@return ocaml.config.OCamlConfig
-function M.init_config(user_config)
-  return vim.tbl_deep_extend("force", default, user_config or {})
+function M.build(user_config)
+  user_config = user_config or {}
+
+  local config = default
+  for k, v in pairs(user_config) do
+    if config[k] ~= nil then
+      config[k] = v
+    end
+  end
+  return config
 end
 
 return M
