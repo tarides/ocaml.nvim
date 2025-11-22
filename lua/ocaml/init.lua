@@ -554,7 +554,7 @@ end
 --- Initialize the OCaml plugin
 ---@param user_config ocaml.config.OCamlConfig|?
 function M.setup(user_config)
-  local user_opts = config.init_config(user_config)
+  local user_opts = config.build(user_config)
 
   api.nvim_create_autocmd("FileType", {
     pattern = { "ocaml", "ocaml.interface" },
