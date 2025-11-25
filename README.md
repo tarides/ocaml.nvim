@@ -30,6 +30,26 @@ Opam allows you to install packages either locally (in the current switch) or gl
 $ opam install ocaml-lsp-server
 ```
 
+##### Using Dune
+
+If you are using [Dune for package
+management](https://dune.readthedocs.io/en/stable/explanation/package-management.html)
+on the [latest nightly build](https://preview.dune.build/) or version 3.21 or
+later, you can install `ocamllsp` locally within the current project by
+running:
+```bash
+$ dune tools install ocamllsp
+```
+
+This will compile `ocamllsp` with the same OCaml compiler as the project itself -
+a requirement for `ocamllsp` to be able to analyze the code in the project.
+
+To make sure Neovim launches the project's local instance of `ocamllsp`, run
+`eval $(dune tools env)` from your shell before launching Neovim from the same
+shell. This can be automated by adding `eval $(dune tools env)` to a `.envrc`
+file in the project's root directory and using [direnv](https://direnv.net).
+
+
 ##### From source
 
 ```bash
