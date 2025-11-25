@@ -3,9 +3,15 @@
 ## What is ocaml.nvim?
 
 `ocaml.nvim` is a Neovim plugin that enhances the OCaml development experience.
-It is an extension of the Language Server Protocol (LSP) for OCaml, because it provides features beyond the standard LSP scope.
-It aims to provide the features that OCaml Merlin offers, which are missing from LSP.
-This plugin requires the OCaml LSP server called `ocamllsp`, but you should also have an LSP support to have the standard features, either natively or using `lsp-config`.
+It is an extension of the Language Server Protocol (LSP) for OCaml, providing features beyond the standard LSP scope.
+It aims to provide the features that [Merlin](https://ocaml.github.io/merlin/) offers, which are missing from LSP.
+This plugin requires the OCaml LSP server `ocamllsp` to be installed to one of the directories in your `$PATH`.
+It doesn't reimplement standard features of the LSP client, so you'll need a version of Neovim with a [built-in LSP
+client](https://neovim.io/doc/user/lsp.html) and optionally the
+[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) package configured
+for `ocamllsp` (see
+[here](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ocamllsp)
+for instructions).
 `ocaml.nvim` also simplifies the use of some code actions with dedicated commands.
 
 ## Table of contents
@@ -42,9 +48,9 @@ Please read the dedicated [README.md](https://github.com/ocaml/ocaml-lsp) for mo
 
 #### 2- Add `ocamllsp` server in the LSP configuration
 
-If you are using the native LSP please refer th the [official documentation](https://neovim.io/doc/user/lsp.html) for the installation.
+If you are using the native LSP please refer to the [official documentation](https://neovim.io/doc/user/lsp.html) for the installation.
 
-If you are using a plugin giving you a set of LSP configuration like [`nvim-lspconfig`](https://github.com/neovim/nvim-lspconfig), please refer to it respective documentation.
+If you are using a plugin giving you a set of LSP configuration like [`nvim-lspconfig`](https://github.com/neovim/nvim-lspconfig), please refer to its respective documentation.
 
 #### 3- Add `ocaml.nvim` to your configuration
 
