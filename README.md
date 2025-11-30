@@ -86,6 +86,37 @@ require("lazy").setup({
 })
 ```
 
+## Customization
+
+You can customize all the keymaps available that doesn't have mandatory arguments.
+To do that, you need to give the `setup` function the `keymaps` array.
+Every keymap you provide should be a string and will overwrite the default one specified in the [Usage](#usage) table.
+Below is the list of the available keymaps you can edit:
+
+```lua
+require("ocaml").setup({
+  -- If you replace this section with {} it will not setup any
+  -- keymaps.
+  keymaps = {
+    jump_next_hole = "<leader>n",
+    jump_prev_hole = "<leader>p",
+    construct = "<leader>c",
+    jump = "<leader>j",
+    phrase_prev = "<leader>pp",
+    phrase_next = "<leader>pn",
+    infer = "<leader>i",
+    switch_ml_mli = "<leader>s",
+    type_enclosing = "<leader>t",
+    type_enclosing_grow = "<Up>",
+    type_enclosing_shrink = "<Down>",
+    type_enclosing_increase = "<Right>",
+    type_enclosing_decrease = "<Left>",
+  },
+})
+```
+
+As soon as you start defining your **own** keymaps, the default ones **will not** be set anymore.
+
 ## Usage
 
 This section lists all the functions available in Neovim to streamline your OCaml development workflow.
@@ -183,33 +214,6 @@ You can adjust the size of the expression and the verbosity level of the type wi
 - `:OCamlTypeExpression expr` prints the type of the expression `expr`. For example, it can be `[1;2;3]` which will return `int list`.
 
 ![TypeExpression example](media/typeexression.gif)
-
-## Customization
-
-You can customize all the keymaps available that doesn't have mandatory arguments.
-To do that, you need to give the `setup` function the `keymaps` array.
-Every keymap you provide should be a string and will overwrite the default one specified in the [Usage](#usage) table.
-Below is the list of the available keymaps you can edit.
-
-```lua
-require("ocaml").setup({
-  keymaps = {
-    jump_next_hole = "<leader>n",
-    jump_prev_hole = "<leader>p",
-    construct = "<leader>c",
-    jump = "<leader>j",
-    phrase_prev = "<leader>pp",
-    phrase_next = "<leader>pn",
-    infer = "<leader>i",
-    switch_ml_mli = "<leader>s",
-    type_enclosing = "<leader>t",
-    type_enclosing_grow = "<Up>",
-    type_enclosing_shrink = "<Down>",
-    type_enclosing_increase = "<Right>",
-    type_enclosing_decrease = "<Left>",
-  },
-})
-```
 
 ## Contributing
 
