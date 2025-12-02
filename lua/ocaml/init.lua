@@ -1,30 +1,14 @@
 local M = {}
 
-local ui = require("ocaml.ui")
+-- Small trick to make vim warning popping only here.
+local vim = vim
 
 local api = vim.api
+local config = require("ocaml.config")
 local ui = require("ocaml.ui")
 
 -- 5.1 Lua JUT Runtime compatibility
 table.unpack = table.unpack or unpack
-
-local config = {
-  keymaps = {
-    jump_next_hole = "<leader>n",
-    jump_prev_hole = "<leader>p",
-    construct = "<leader>c",
-    jump = "<leader>j",
-    phrase_prev = "<leader>pp",
-    phrase_next = "<leader>pn",
-    infer = "<leader>i",
-    switch_ml_mli = "<leader>s",
-    type_enclosing = "<leader>t",
-    type_enclosing_grow = "<Up>",
-    type_enclosing_shrink = "<Down>",
-    type_enclosing_increase = "<Right>",
-    type_enclosing_decrease = "<Left>",
-  },
-}
 
 local function get_server()
   local clients = vim.lsp.get_clients({ name = "ocamllsp" })
@@ -139,7 +123,7 @@ function M.jump(target)
   end)
 end
 
-function merlinCallCompatible(client, command, args)
+local function merlinCallCompatible(client, command, args)
   local params = {
     uri = vim.uri_from_bufnr(0),
     command = command,
@@ -448,23 +432,37 @@ function M.decrease_verbosity()
   M.display_type(enclosings[index])
 end
 
-function M.start_session()
+--- Starts a type enclosing session and register keys
+---@param user_opts ocaml.config.OCamlConfig
+local function start_session(user_opts)
   if vim.b.in_special_mode then
     return
   end
   vim.b.in_special_mode = true
-  vim.keymap.set("n", config.keymaps.type_enclosing_grow, function()
-    M.grow_enclosing()
-  end, { buffer = true, desc = "Grow enclosing" })
-  vim.keymap.set("n", config.keymaps.type_enclosing_shrink, function()
-    M.shrink_enclosing()
-  end, { buffer = true, desc = "Shrink enclosing" })
-  vim.keymap.set("n", config.keymaps.type_enclosing_increase, function()
-    M.increase_verbosity()
-  end, { buffer = true, desc = "Increase verbosity" })
-  vim.keymap.set("n", config.keymaps.type_enclosing_decrease, function()
-    M.decrease_verbosity()
-  end, { buffer = true, desc = "Decrease verbosity" })
+
+  if user_opts.keymaps.type_enclosing_grow ~= nil then
+    vim.keymap.set("n", user_opts.keymaps.type_enclosing_grow, function()
+      M.grow_enclosing()
+    end, { buffer = true, desc = "Grow enclosing" })
+  end
+
+  if user_opts.keymaps.type_enclosing_shrink ~= nil then
+    vim.keymap.set("n", user_opts.keymaps.type_enclosing_shrink, function()
+      M.shrink_enclosing()
+    end, { buffer = true, desc = "Shrink enclosing" })
+  end
+
+  if user_opts.keymaps.type_enclosing_increase ~= nil then
+    vim.keymap.set("n", user_opts.keymaps.type_enclosing_increase, function()
+      M.increase_verbosity()
+    end, { buffer = true, desc = "Increase verbosity" })
+  end
+
+  if user_opts.keymaps.type_enclosing_decrease ~= nil then
+    vim.keymap.set("n", user_opts.keymaps.type_enclosing_decrease, function()
+      M.decrease_verbosity()
+    end, { buffer = true, desc = "Decrease verbosity" })
+  end
 
   local function stop_session()
     enclosings = nil
@@ -475,10 +473,23 @@ function M.start_session()
       return
     end
     vim.b.in_special_mode = false
-    vim.keymap.del("n", config.keymaps.type_enclosing_grow, { buffer = true })
-    vim.keymap.del("n", config.keymaps.type_enclosing_shrink, { buffer = true })
-    vim.keymap.del("n", config.keymaps.type_enclosing_increase, { buffer = true })
-    vim.keymap.del("n", config.keymaps.type_enclosing_decrease, { buffer = true })
+
+    if user_opts.keymaps.type_enclosing_grow ~= nil then
+      vim.keymap.del("n", user_opts.keymaps.type_enclosing_grow, { buffer = true })
+    end
+
+    if user_opts.keymaps.type_enclosing_shrink ~= nil then
+      vim.keymap.del("n", user_opts.keymaps.type_enclosing_shrink, { buffer = true })
+    end
+
+    if user_opts.keymaps.type_enclosing_increase ~= nil then
+      vim.keymap.del("n", user_opts.keymaps.type_enclosing_increase, { buffer = true })
+    end
+
+    if user_opts.keymaps.type_enclosing_decrease ~= nil then
+      vim.keymap.del("n", user_opts.keymaps.type_enclosing_decrease, { buffer = true })
+    end
+
     vim.api.nvim_clear_autocmds({ group = "EnclosingSession" })
   end
 
@@ -527,7 +538,9 @@ function M.display_type(range)
   ui.highlight_range(0, namespace, range, "Search")
 end
 
-function M.enter_type_enclosing()
+--- Start an interactive type enclosing session
+---@param user_opts ocaml.config.OCamlConfig
+function M.enter_type_enclosing(user_opts)
   local row, col = table.unpack(api.nvim_win_get_cursor(0))
   local at = { line = row - 1, character = col }
   local result = M.type_enclosing(at, 0, verbosity)
@@ -535,97 +548,120 @@ function M.enter_type_enclosing()
   enclosings = result.enclosings
   index = 1
   M.display_type(enclosings[index])
-  M.start_session()
+  start_session(user_opts)
 end
 
 --- Initialize the OCaml plugin
----@param user_config any
+---@param user_config ocaml.config.OCamlConfig|?
 function M.setup(user_config)
-  config = vim.tbl_deep_extend("force", config, user_config or {})
-  local _ = config
+  local user_opts = config.build(user_config)
 
   api.nvim_create_autocmd("FileType", {
     pattern = { "ocaml", "ocaml.interface" },
     callback = function()
-      vim.api.nvim_create_user_command("OCamlJumpNextHole", function()
-        M.jump_to_hole("next")
-      end, {})
-      vim.keymap.set(
-        "n",
-        config.keymaps.jump_next_hole,
-        "<CMD>OCamlJumpNextHole<CR>",
-        { desc = "OCaml: Jump to the next hole" }
-      )
-
       vim.api.nvim_create_user_command("OCamlJumpPrevHole", function()
         M.jump_to_hole("prev")
       end, {})
-      vim.keymap.set(
-        "n",
-        config.keymaps.jump_prev_hole,
-        "<CMD>OCamlJumpPrevHole<CR>",
-        { desc = "OCaml: Jump to the previous hole" }
-      )
+
+      if user_opts.keymaps.jump_prev_hole ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.jump_prev_hole,
+          "<CMD>OCamlJumpPrevHole<CR>",
+          { desc = "OCaml: Jump to the previous hole" }
+        )
+      end
+
+      vim.api.nvim_create_user_command("OCamlJumpNextHole", function()
+        M.jump_to_hole("next")
+      end, {})
+
+      if user_opts.keymaps.jump_next_hole ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.jump_next_hole,
+          "<CMD>OCamlJumpNextHole<CR>",
+          { desc = "OCaml: Jump to the next hole" }
+        )
+      end
 
       vim.api.nvim_create_user_command("OCamlConstruct", function()
         M.construct()
       end, {})
-      vim.keymap.set(
-        "n",
-        config.keymaps.construct,
-        "<CMD>OCamlConstruct<CR>",
-        { desc = "OCaml: Open a list of valid substitutions to fill the hole" }
-      )
+
+      if user_opts.keymaps.construct ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.construct,
+          "<CMD>OCamlConstruct<CR>",
+          { desc = "OCaml: Open a list of valid substitutions to fill the hole" }
+        )
+      end
 
       vim.api.nvim_create_user_command("OCamlJump", function(opts)
         M.jump(opts.args)
       end, { nargs = "?" })
-      vim.keymap.set(
-        "n",
-        config.keymaps.jump,
-        "<CMD>OCamlJump<CR>",
-        { desc = "OCaml: Open a list of valid jump from this location" }
-      )
+
+      if user_opts.keymaps.jump ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.jump,
+          "<CMD>OCamlJump<CR>",
+          { desc = "OCaml: Open a list of valid jump from this location" }
+        )
+      end
 
       vim.api.nvim_create_user_command("OCamlPhrasePrev", function()
         M.phrase("prev")
       end, {})
-      vim.keymap.set(
-        "n",
-        config.keymaps.phrase_prev,
-        "<CMD>OCamlPhrasePrev<CR>",
-        { desc = "OCaml: Jump to the beginning of the previous phrase" }
-      )
+
+      if user_opts.keymaps.phrase_prev ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.phrase_prev,
+          "<CMD>OCamlPhrasePrev<CR>",
+          { desc = "OCaml: Jump to the beginning of the previous phrase" }
+        )
+      end
 
       vim.api.nvim_create_user_command("OCamlPhraseNext", function()
         M.phrase("next")
       end, {})
-      vim.keymap.set(
-        "n",
-        config.keymaps.phrase_next,
-        "<CMD>OCamlPhraseNext<CR>",
-        { desc = "OCaml: Jump to the beginning of the next phrase" }
-      )
+
+      if user_opts.keymaps.phrase_next ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.phrase_next,
+          "<CMD>OCamlPhraseNext<CR>",
+          { desc = "OCaml: Jump to the beginning of the next phrase" }
+        )
+      end
 
       vim.api.nvim_create_user_command("OCamlInferIntf", function()
         M.infer_intf()
       end, {})
-      vim.keymap.set(
-        "n",
-        config.keymaps.infer,
-        "<CMD>OCaml<CR>",
-        { desc = "OCaml: Infer the interface of the associated implementation file" }
-      )
+
+      if user_opts.keymaps.infer ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.infer,
+          "<CMD>OCaml<CR>",
+          { desc = "OCaml: Infer the interface of the associated implementation file" }
+        )
+      end
 
       vim.api.nvim_create_user_command("OCamlSwitchIntfImpl", function()
         M.switch_file()
       end, {})
-      vim.keymap.set(
-        "n",
-        config.keymaps.switch_ml_mli,
-        "<CMD>OCamlSwitchIntfImpl<CR>",
-        { desc = "OCaml: Switch between `.ml` and `.mli` file" }
-      )
+
+      if user_opts.keymaps.switch_ml_mli ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.switch_ml_mli,
+          "<CMD>OCamlSwitchIntfImpl<CR>",
+          { desc = "OCaml: Switch between `.ml` and `.mli` file" }
+        )
+      end
 
       vim.api.nvim_create_user_command("OCamlFindIdentifierDefinition", function(opts)
         M.find_identifier_def(opts.args)
@@ -652,14 +688,17 @@ function M.setup(user_config)
       end, { nargs = 1 })
 
       api.nvim_create_user_command("OCamlTypeEnclosing", function()
-        M.enter_type_enclosing()
+        M.enter_type_enclosing(user_opts)
       end, {})
-      vim.keymap.set(
-        "n",
-        config.keymaps.type_enclosing,
-        "<CMD>OCamlTypeEnclosing<CR>",
-        { desc = "OCaml: Display the type under the cursor and start a `type enclosing session`" }
-      )
+
+      if user_opts.keymaps.type_enclosing ~= nil then
+        vim.keymap.set(
+          "n",
+          user_opts.keymaps.type_enclosing,
+          "<CMD>OCamlTypeEnclosing<CR>",
+          { desc = "OCaml: Display the type under the cursor and start a `type enclosing session`" }
+        )
+      end
     end,
   })
 end
