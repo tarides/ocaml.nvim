@@ -88,13 +88,18 @@ require("lazy").setup({
 
 ## Customization
 
-You can customize all the keymaps available that doesn't have mandatory arguments.
+It is possible to customize the name of the OCaml LSP client.
+By default, the `client` is set to `ocamllsp`, but you can change it in the `params` array.
+You can also customize all the keymaps available that doesn't have mandatory arguments.
 To do that, you need to give the `setup` function the `keymaps` array.
 Every keymap you provide should be a string and will overwrite the default one specified in the [Usage](#usage) table.
-Below is the list of the available keymaps you can edit:
+Add the following to your configuration and edit both `params` and `keymaps` lists as needed.
 
 ```lua
 require("ocaml").setup({
+  params = {
+    client = "ocamllsp",
+  },
   -- If you replace this section with {} it will not setup any
   -- keymaps.
   keymaps = {

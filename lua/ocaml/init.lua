@@ -6,14 +6,15 @@ local vim = vim
 local api = vim.api
 local config = require("ocaml.config")
 local ui = require("ocaml.ui")
+local client_name = "ocamllsp"
 
 -- 5.1 Lua JUT Runtime compatibility
 table.unpack = table.unpack or unpack
 
 local function get_server()
-  local clients = vim.lsp.get_clients({ name = "ocamllsp" })
+  local clients = vim.lsp.get_clients({ name = client_name })
   for _, client in ipairs(clients) do
-    if client.name == "ocamllsp" then
+    if client.name == client_name then
       return client
     end
   end
@@ -24,7 +25,7 @@ local function with_server(callback)
   if server then
     return callback(server)
   end
-  vim.notify("No OCaml LSP server available", vim.log.levels.ERROR)
+  vim.notify("No OCaml LSP server available with the name " .. client_name .. ".", vim.log.levels.ERROR)
 end
 
 function M.jump_to_hole(dir, range, bufnr)
@@ -547,6 +548,7 @@ end
 ---@param user_config ocaml.config.OCamlConfig|?
 function M.setup(user_config)
   local user_opts = config.build(user_config)
+  client_name = user_opts.params.client
 
   api.nvim_create_autocmd("FileType", {
     pattern = { "ocaml", "ocaml.interface" },
