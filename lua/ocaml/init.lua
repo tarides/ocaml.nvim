@@ -249,14 +249,10 @@ end
 function M.find_identifier_def(identifier)
   with_server(function(client)
     local result = find_identifier(client, identifier, "implementation")
-    if not (result and result.result) then
-      vim.notify("No definition for identifier " .. identifier .. ".", vim.log.levels.WARN)
-      return
-    end
     local data = result.result.result
     local parsed = parse(data)
     if parsed == nil then
-      vim.notify("Failed to parse.", vim.log.levels.ERROR)
+      vim.notify("No definition for identifier " .. identifier .. ".", vim.log.levels.ERROR)
       return
     end
     vim.cmd.split(parsed.value.file)
@@ -267,14 +263,10 @@ end
 function M.find_identifier_decl(identifier)
   with_server(function(client)
     local result = find_identifier(client, identifier, "interface")
-    if not (result and result.result) then
-      vim.notify("No declaration for identifier " .. identifier .. ".", vim.log.levels.WARN)
-      return
-    end
     local data = result.result.result
     local parsed = parse(data)
     if parsed == nil then
-      vim.notify("Failed to parse.", vim.log.levels.ERROR)
+      vim.notify("No declaration for identifier " .. identifier .. ".", vim.log.levels.ERROR)
       return
     end
     vim.cmd.split(parsed.value.file)
