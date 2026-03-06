@@ -5,7 +5,7 @@
 `ocaml.nvim` is a Neovim plugin that enhances the OCaml development experience.
 It is an extension of the Language Server Protocol (LSP) for OCaml, providing features beyond the standard LSP scope.
 It aims to provide the features that [Merlin](https://ocaml.github.io/merlin/) offers, which are missing from LSP.
-This plugin requires the OCaml LSP server `ocamllsp` to be installed to one of the directories in your `$PATH`.
+This plugin requires the OCaml LSP server `ocamllsp` to be installed and present in `$PATH`.
 It doesn't reimplement standard features of the LSP client, so you'll need a version of Neovim with a [built-in LSP
 client](https://neovim.io/doc/user/lsp.html) and optionally the
 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) package configured
