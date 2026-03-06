@@ -8,7 +8,7 @@ local config = require("ocaml.config")
 local ui = require("ocaml.ui")
 local client_name = "ocamllsp"
 
--- 5.1 Lua JUT Runtime compatibility
+-- 5.1 Lua JIT Runtime compatibility
 table.unpack = table.unpack or unpack
 
 local function get_server()
