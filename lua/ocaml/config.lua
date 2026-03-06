@@ -1,6 +1,9 @@
 local vim = vim
 local M = {}
 
+---@class OCamlConfigParam
+---@field client string|?
+
 ---@class OCamlConfigKeymaps
 ---@field jump_next_hole string|?
 ---@field jump_prev_hole string|?
@@ -18,10 +21,14 @@ local M = {}
 
 ---@class ocaml.config.OCamlConfig
 ---@field keymaps OCamlConfigKeymaps
+---@field params OCamlConfigParam
 
 --- Default values
 --- @type ocaml.config.OCamlConfig
 local default = {
+  params = {
+    client = "ocamllsp",
+  },
   keymaps = {
     jump_next_hole = "<leader>n",
     jump_prev_hole = "<leader>p",
