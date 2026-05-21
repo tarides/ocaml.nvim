@@ -250,4 +250,5 @@ verbosity level of the type with the arrow keys.
 
 ## Contributing
 
-All contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md)
+All contributions are welcome!
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for all the information. You will also find other files that could be interesting for contributing, such as [ARCHITECTURE.md](ARCHITECTURE.md), which describes the codebase.
