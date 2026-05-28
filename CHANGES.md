@@ -1,6 +1,8 @@
 unrealeased
 -----------
 
+- Improving documentation
+  [\30](https://github.com/tarides/ocaml.nvim/pull/30)
 - Add CI workflow for changelog
   [\31](https://github.com/tarides/ocaml.nvim/pull/31)
 - Some typo and reformulatoin

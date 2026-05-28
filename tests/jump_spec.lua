@@ -16,7 +16,7 @@ function pp_stats()
   print("\tOCamlConstruct count : " .. stats[3])
 end
 
-local pull = {
+local pool = {
   function(state, _)
     local ns = logic.jump(state, "prev")
     ocaml.jump_to_hole("prev")
@@ -43,9 +43,9 @@ function run(state, seed, steps)
     if n == steps then
       return
     end
-    local r = math.random(#pull)
+    local r = math.random(#pool)
     local input = math.random(2)
-    local ns = pull[r](s, input)
+    local ns = pool[r](s, input)
     local pl_cursor = get_line()
     assert.are.equal(pl_cursor, ns.cursor)
     iter(ns, n + 1)
