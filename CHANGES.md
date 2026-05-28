@@ -3,6 +3,8 @@ unrealeased
 
 - Improving documentation
   [\30](https://github.com/tarides/ocaml.nvim/pull/30)
+- Add CI workflow for changelog
+  [\31](https://github.com/tarides/ocaml.nvim/pull/31)
 - Some typo and reformulatoin
   [\28](https://github.com/tarides/ocaml.nvim/pull/28)
 - Improve the error message when the identifier is not found
