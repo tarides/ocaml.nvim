@@ -1,6 +1,8 @@
 unrealeased
 -----------
 
+- Fix deprecated usages of `client.request_sync` 
+  [#32](https://github.com/tarides/ocaml.nvim/pull/32)
 - Improving documentation
   [\30](https://github.com/tarides/ocaml.nvim/pull/30)
 - Add CI workflow for changelog
