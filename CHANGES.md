@@ -4,15 +4,15 @@ unrealeased
 - Fix deprecated usages of `client.request_sync` 
   [#32](https://github.com/tarides/ocaml.nvim/pull/32)
 - Improving documentation
-  [\30](https://github.com/tarides/ocaml.nvim/pull/30)
+  [#30](https://github.com/tarides/ocaml.nvim/pull/30)
 - Add CI workflow for changelog
-  [\31](https://github.com/tarides/ocaml.nvim/pull/31)
+  [#31](https://github.com/tarides/ocaml.nvim/pull/31)
 - Some typo and reformulatoin
-  [\28](https://github.com/tarides/ocaml.nvim/pull/28)
+  [#28](https://github.com/tarides/ocaml.nvim/pull/28)
 - Improve the error message when the identifier is not found
-  [\27](https://github.com/tarides/ocaml.nvim/pull/27)
+  [#27](https://github.com/tarides/ocaml.nvim/pull/27)
 - Enable custom OCaml LSP server name in the config
-  [\26](https://github.com/tarides/ocaml.nvim/pull/26)
+  [#26](https://github.com/tarides/ocaml.nvim/pull/26)
 
 ocaml.nvim 1.0.0
 -----------
