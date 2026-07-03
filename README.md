@@ -82,6 +82,18 @@ its respective documentation.
 
 #### 3- Add `ocaml.nvim` to your configuration
 
+Using [vim.pack](https://neovim.io/doc/user/pack/#_plugin-manager) the built-in
+plugin manager (since 0.12)
+
+```lua
+vim.pack.add({
+  -- OCaml support
+  'https://github.com/tarides/ocaml.nvim',
+})
+
+require('ocaml').setup {}
+```
+
 Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
