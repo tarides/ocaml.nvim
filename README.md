@@ -124,15 +124,15 @@ require("ocaml").setup({
   -- If you replace this section with {} it will not setup any
   -- keymaps.
   keymaps = {
-    jump_next_hole = "<leader>n",
-    jump_prev_hole = "<leader>p",
-    construct = "<leader>c",
-    jump = "<leader>j",
-    phrase_prev = "<leader>pp",
-    phrase_next = "<leader>pn",
-    infer = "<leader>i",
-    switch_ml_mli = "<leader>s",
-    type_enclosing = "<leader>t",
+    jump_next_hole = "<localleader>n",
+    jump_prev_hole = "<localleader>p",
+    construct = "<localleader>c",
+    jump = "<localleader>j",
+    phrase_prev = "<localleader>pp",
+    phrase_next = "<localleader>pn",
+    infer = "<localleader>i",
+    switch_ml_mli = "<localleader>s",
+    type_enclosing = "<localleader>t",
     type_enclosing_grow = "<Up>",
     type_enclosing_shrink = "<Down>",
     type_enclosing_increase = "<Right>",
@@ -154,21 +154,21 @@ provided below, including links to the corresponding sections for more context.
 
 ### Commands Overview
 
-| Command                                 | Keymap       | Action                                                     | Detail                                                   |
-| --------------------------------------- | ------------ | ---------------------------------------------------------- | -------------------------------------------------------- |
-| `:OCamlJumpPrevHole`                    | `<leader>p`  | Jump to the previous hole.                                 | [Holes handling](#holes-handling)                        |
-| `:OCamlJumpNextHole`                    | `<leader>n`  | Jump to the next hole.                                     | [Holes handling](#holes-handling)                        |
-| `:OCamlConstruct`                       | `<leader>c`  | Open a list of valid substitutions to fill the hole.       | [Holes handling](#holes-handling)                        |
-| `:OCamlJump` expr?                      | `<leader>j`  | Open a list of jumpable expression or jump to `expr`.      | [Code navigation](#code-navigation)                      |
-| `:OCamlPhraseNext`                      | `<leader>pn` | Jump to the beginning of the next phrase.                  | [Code navigation](#code-navigation)                      |
-| `:OCamlPhrasePrev`                      | `<leader>pp` | Jump to the beginning of the previous phrase.              | [Code navigation](#code-navigation)                      |
-| `:OCamlInferIntf`                       | `<leader>i`  | Infer the interface of the associated implementation file. | [Interface file management](#interface-file-management)  |
-| `:OCamlSwitchIntfImpl`                  | `<leader>s`  | Switch between `.ml` file and `.mli` file.                 | [Interface file management](#interface-file-management)  |
-| `:OCamlFindIdentifierDefinition` idt    |              | Open to the identifier `idt` definition.                   | [Identifier information](#identifier-information)        |
-| `:OCamlFindIdentifierDeclaration` idt   |              | Open to the identifier `idt` declaration.                  | [Identifier information](#identifier-information)        |
-| `:OCamlDocumentIdentifier` idt          |              | Display the identifier `idt` documentation.                | [Identifier information](#identifier-information)        |
-| `:OCamlSearchDefinition` ty             |              | Open to the type `ty` definition.                          | [Type information](#type-information)                    |
-| `:OCamlSearchDeclaration` ty            |              | Open to the type `ty` declaration.                         | [Type information](#type-information)                    |
+| Command                                 | Keymap            | Action                                                     | Detail                                                   |
+| --------------------------------------- | ----------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
+| `:OCamlJumpPrevHole`                    | `<localleader>p`  | Jump to the previous hole.                                 | [Holes handling](#holes-handling)                        |
+| `:OCamlJumpNextHole`                    | `<localleader>n`  | Jump to the next hole.                                     | [Holes handling](#holes-handling)                        |
+| `:OCamlConstruct`                       | `<localleader>c`  | Open a list of valid substitutions to fill the hole.       | [Holes handling](#holes-handling)                        |
+| `:OCamlJump` expr?                      | `<localleader>j`  | Open a list of jumpable expression or jump to `expr`.      | [Code navigation](#code-navigation)                      |
+| `:OCamlPhraseNext`                      | `<localleader>pn` | Jump to the beginning of the next phrase.                  | [Code navigation](#code-navigation)                      |
+| `:OCamlPhrasePrev`                      | `<localleader>pp` | Jump to the beginning of the previous phrase.              | [Code navigation](#code-navigation)                      |
+| `:OCamlInferIntf`                       | `<localleader>i`  | Infer the interface of the associated implementation file. | [Interface file management](#interface-file-management)  |
+| `:OCamlSwitchIntfImpl`                  | `<localleader>s`  | Switch between `.ml` file and `.mli` file.                 | [Interface file management](#interface-file-management)  |
+| `:OCamlFindIdentifierDefinition` idt    |                   | Open to the identifier `idt` definition.                   | [Identifier information](#identifier-information)        |
+| `:OCamlFindIdentifierDeclaration` idt   |                   | Open to the identifier `idt` declaration.                  | [Identifier information](#identifier-information)        |
+| `:OCamlDocumentIdentifier` idt          |                   | Display the identifier `idt` documentation.                | [Identifier information](#identifier-information)        |
+| `:OCamlSearchDefinition` ty             |                   | Open to the type `ty` definition.                          | [Type information](#type-information)                    |
+| `:OCamlSearchDeclaration` ty            |                   | Open to the type `ty` declaration.                         | [Type information](#type-information)                    |
 
 ### Details
 
