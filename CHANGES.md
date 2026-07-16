@@ -1,6 +1,8 @@
 unrealeased
 -----------
 
+- Use `<localleader>` instead of `<leader>` in default keybindings
+  [#34](https://github.com/tarides/ocaml.nvim/pull/34)
 - Fix deprecated usages of `client.request_sync` 
   [#32](https://github.com/tarides/ocaml.nvim/pull/32)
 - Improving documentation
