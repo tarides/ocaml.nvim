@@ -38,7 +38,7 @@ function M.jump_to_hole(dir, range, bufnr)
       direction = dir,
       range = range,
     }
-    local result = client.request_sync("ocamllsp/jumpToTypedHole", params, 1000)
+    local result = client:request_sync("ocamllsp/jumpToTypedHole", params, 1000)
     if not result then
       vim.notify("No typed holes found.", vim.log.levels.WARN)
       return
@@ -60,7 +60,7 @@ function M.construct()
       position = { line = row - 1, character = col },
       withValues = "local",
     }
-    local result = client.request_sync("ocamllsp/construct", params, 1000)
+    local result = client:request_sync("ocamllsp/construct", params, 1000)
     if not (result and result.result) then
       vim.notify("Unable to construct.", vim.log.levels.WARN)
       return
@@ -87,7 +87,7 @@ end
 function M.jump(target)
   with_server(function(client)
     local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
-    local result = client.request_sync("ocamllsp/jump", params, 1000)
+    local result = client:request_sync("ocamllsp/jump", params, 1000)
     if not (result and result.result) then
       vim.notify("Unable to jump.", vim.log.levels.WARN)
       return
@@ -131,7 +131,7 @@ local function merlinCallCompatible(client, command, args)
     args = args,
     resultAsSexp = false,
   }
-  return client.request_sync("ocamllsp/merlinCallCompatible", params, 1000)
+  return client:request_sync("ocamllsp/merlinCallCompatible", params, 1000)
 end
 
 function M.phrase(dir)
@@ -195,7 +195,7 @@ function M.infer_intf()
       return
     end
     load_pair(0)
-    local result = client.request_sync("ocamllsp/inferIntf", { vim.uri_from_fname(mlfile) }, 1000)
+    local result = client:request_sync("ocamllsp/inferIntf", { vim.uri_from_fname(mlfile) }, 1000)
     if not (result and result.result) then
       vim.notify("Unable to infer the interface.", vim.log.levels.WARN)
       return
@@ -211,7 +211,7 @@ end
 
 function M.switch_file()
   with_server(function(client)
-    local result = client.request_sync("ocamllsp/switchImplIntf", { vim.uri_from_bufnr(0) }, 1000)
+    local result = client:request_sync("ocamllsp/switchImplIntf", { vim.uri_from_bufnr(0) }, 1000)
     if not (result and result.result) then
       vim.notify("No file to switch founded.", vim.log.levels.WARN)
       return
@@ -283,7 +283,7 @@ function M.document_identifier(identifier)
       position = { line = row, character = col },
       identifier = identifier,
     }
-    local result = client.request_sync("ocamllsp/getDocumentation", params, 1000)
+    local result = client:request_sync("ocamllsp/getDocumentation", params, 1000)
     if not (result and result.result) then
       vim.notify("No documentation found for " .. identifier, vim.log.levels.WARN)
       return
@@ -316,7 +316,7 @@ local function search_definition_declaration(query, f)
       with_doc = true,
       doc_format = "plaintext",
     }
-    local result = client.request_sync("ocamllsp/typeSearch", params, 1000)
+    local result = client:request_sync("ocamllsp/typeSearch", params, 1000)
     if not (result and result.result) then
       vim.notify("Unable to find type " .. query .. ".", vim.log.levels.WARN)
       return
@@ -507,7 +507,7 @@ function M.type_enclosing(at, offset, v)
       index = offset,
       verbosity = v,
     }
-    local result = client.request_sync("ocamllsp/typeEnclosing", params, 1000)
+    local result = client:request_sync("ocamllsp/typeEnclosing", params, 1000)
     if not (result and result.result) then
       vim.notify("Unable to do the type enclosing.", vim.log.levels.WARN)
       return
