@@ -639,7 +639,7 @@ function M.setup(user_config)
         vim.keymap.set(
           "n",
           user_opts.keymaps.infer,
-          "<CMD>OCaml<CR>",
+          "<CMD>OCamlInferIntf<CR>",
           { desc = "OCaml: Infer the interface of the associated implementation file" }
         )
       end
